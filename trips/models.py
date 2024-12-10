@@ -25,6 +25,9 @@ class Trip(models.Model):
     scheduled = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
 
+    def __str__(self):
+        return f'{self.title} ({self.slug})'
+
 
 class Destination(models.Model):
     """Representation of the destination table"""
@@ -33,3 +36,6 @@ class Destination(models.Model):
     name = models.CharField(max_length=50)
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.name} [from Trip: {self.trip}]'
