@@ -1,3 +1,13 @@
-from django.shortcuts import render
+"""
+Views for the trips app.
+"""
 
-# Create your views here.
+from django.http import HttpResponse
+
+
+def index(_request):
+    """
+    TODO
+    """
+
+    return HttpResponse("Hello, world. You're at the trips index.")
