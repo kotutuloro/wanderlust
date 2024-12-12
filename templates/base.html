@@ -16,7 +16,10 @@
             <a {% comment %} href="{% url "trips:profile" %}" {% endcomment %}>{{ user.username }}</a>
           </li>
           <li>
-            <a href="{% url "accounts:logout" %}">Log Out</a>
+            <form action="{% url "accounts:logout" %}" method="post">
+              {% csrf_token %}
+              <button type="submit">Log Out</button>
+            </form>
           </li>
         {% else %}
           <li>
