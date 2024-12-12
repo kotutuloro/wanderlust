@@ -13,7 +13,10 @@
       <ul>
         {% if user.is_authenticated %}
           <li>
-            <a {% comment %} href="{% url "trips:profile" %}" {% endcomment %}>{{ user.username }}</a>
+            <a {% comment %} href="{% url "trips:profile" %}" {% endcomment %}>My Trips</a>
+          </li>
+          <li>
+            <a href="{% url "accounts:settings" %}">Settings</a>
           </li>
           <li>
             <form action="{% url "accounts:logout" %}" method="post">
