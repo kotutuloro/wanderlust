@@ -2,12 +2,12 @@
 Views for the trips app.
 """
 
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
-def index(_request):
+def index(request):
     """
-    TODO
+    Render the app's homepage.
     """
 
-    return HttpResponse("Hello, world. You're at the trips index.")
+    return render(request, "trips/index.html")
