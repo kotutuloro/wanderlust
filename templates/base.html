@@ -11,9 +11,9 @@
   <body>
     <nav>
       <ul>
-        {% if auth_user %}
+        {% if user.is_authenticated %}
           <li>
-            {% comment %} <a href="{% url "trips:profile" %}">My Profile</a> {% endcomment %}
+            <a {% comment %} href="{% url "trips:profile" %}" {% endcomment %}>{{ user.username }}</a>
           </li>
           <li>
             <a href="{% url "accounts:logout" %}">Log Out</a>
