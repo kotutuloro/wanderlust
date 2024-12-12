@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="travel" />
+    <meta name="description"
+          content="Keep track of the travelling you want to do." />
+    <title>Wanderlust</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        {% if auth_user %}
+          <li>
+            {% comment %} <a href="{% url "trips:profile" %}">My Profile</a> {% endcomment %}
+          </li>
+          <li>
+            <a href="{% url "accounts:logout" %}">Log Out</a>
+          </li>
+        {% else %}
+          <li>
+            <a href="{% url "accounts:login" %}">Log In</a>
+          </li>
+          <li>
+            {% comment %} <a href="{% url "accounts:signup" %}">Sign Up</a> {% endcomment %}
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+    <main>
+      {% block content %}
+      {% endblock content %}
+    </main>
+  </body>
+</html>
