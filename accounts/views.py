@@ -1,3 +1,17 @@
-from django.shortcuts import render
+"""
+Views for the accounts app
+"""
 
-# Create your views here.
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+
+
+class SignUpView(CreateView):
+    """
+    View for account registration.
+    """
+
+    form_class = UserCreationForm
+    success_url = reverse_lazy("accounts:login")
+    template_name = "registration/signup.html"
