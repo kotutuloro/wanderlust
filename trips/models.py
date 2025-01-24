@@ -4,7 +4,7 @@ Models for the trips app.
 
 from nanoid import generate as generate_nanoid
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 def generate_random_slug():
@@ -18,7 +18,8 @@ class Trip(models.Model):
     # primary key: id (auto set by django)
     slug = models.SlugField(default=generate_random_slug,
                             unique=True, editable=False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
