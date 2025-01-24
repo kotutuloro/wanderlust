@@ -3,15 +3,14 @@ URL configuration for the accounts app.
 """
 
 from django.urls import path, include, reverse_lazy
-from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
-from .views import SignUpView
+from .views import SignUpView, AccountView
 
 app_name = "accounts"
 urlpatterns = [
     path("password_change/", auth_views.PasswordChangeView.as_view(
         success_url=reverse_lazy("accounts:password_change_done"))),
     path("signup/", SignUpView.as_view(), name="signup"),
-    path("settings/", TemplateView.as_view(template_name="registration/settings.html"), name="settings"),
+    path("settings/", AccountView.as_view(), name="settings"),
     path("", include("django.contrib.auth.urls")),
 ]
