@@ -11,7 +11,7 @@ app_name = "accounts"
 urlpatterns = [
     path("password_change/", auth_views.PasswordChangeView.as_view(
         success_url=reverse_lazy("accounts:password_change_done"))),
-    path("", include("django.contrib.auth.urls")),
     path("signup/", SignUpView.as_view(), name="signup"),
     path("settings/", TemplateView.as_view(template_name="registration/settings.html"), name="settings"),
+    path("", include("django.contrib.auth.urls")),
 ]
