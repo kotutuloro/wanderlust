@@ -2,6 +2,7 @@
 Views for the accounts app
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from .forms import AccountCreationForm, AccountForm
@@ -15,7 +16,7 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-class AccountView(DetailView):
+class AccountView(LoginRequiredMixin, DetailView):
     """View for account details."""
     model = User
     template_name = "registration/user_detail.html"
@@ -24,7 +25,7 @@ class AccountView(DetailView):
         return self.request.user
 
 
-class AccountEditView(UpdateView):
+class AccountEditView(LoginRequiredMixin, UpdateView):
     """View for editing account details."""
     model = User
     form_class = AccountForm
