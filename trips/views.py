@@ -6,6 +6,8 @@ from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .models import Trip, Destination
+
 
 def index(request):
     """
@@ -17,7 +19,11 @@ def index(request):
 
 class UserTripsView(LoginRequiredMixin, ListView):
     """View for trips for a logged-in user."""
-    pass
+    context_object_name = "user_trip_list"
+    template_name = "trips/profile.html"
+
+    def get_queryset(self):
+        return self.request.user.trip_set.all()
 
 
 class GetTripView(LoginRequiredMixin, DetailView):

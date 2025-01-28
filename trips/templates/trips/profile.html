@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>My Trips</h2>
+  <ul>
+    {% for trip in user_trip_list %}
+      <li>
+        <a href="{% url "trips:trip-detail" trip.slug %}">{{ trip.title }}</a>
+        {% if trip.start_date or trip.end_date %}
+          [{{ trip.start_date|date|default:"(start)" }} - {{ trip.end_date|date|default:"(end)" }}]
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>No trips for you ;_;</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
