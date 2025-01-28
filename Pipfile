@@ -11,6 +11,7 @@ nanoid = "*"
 [dev-packages]
 djlint = "*"
 pylint = "*"
+pylint-django = "*"
 
 [requires]
 python_version = "3.13"
