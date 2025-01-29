@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Trip - {{ trip.title }}</h2>
+  <p>Owner: {{ trip.owner.username }}</p>
+  <p>Start Date: {{ trip.start_date|date }}</p>
+  <p>End Date: {{ trip.end_date|date }}</p>
+  <p>
+    Scheduled:
+    {% if trip.scheduled %}
+      Yes
+    {% else %}
+      No
+    {% endif %}
+  </p>
+  <p>Notes: {{ trip.notes }}</p>
+{% endblock content %}

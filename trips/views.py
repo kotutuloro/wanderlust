@@ -4,7 +4,7 @@ Views for the trips app.
 
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Trip, Destination
 
@@ -26,9 +26,13 @@ class UserTripsView(LoginRequiredMixin, ListView):
         return self.request.user.trip_set.all()
 
 
-class GetTripView(LoginRequiredMixin, DetailView):
+class TripDetailView(UserPassesTestMixin, DetailView):
     """View for single trip details."""
-    pass
+    model = Trip
+    permission_denied_message = "You don't have access to this trip."
+
+    def test_func(self):
+        return self.request.user == self.get_object().owner
 
 
 class CreateTripView(LoginRequiredMixin, CreateView):
