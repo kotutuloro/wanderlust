@@ -7,6 +7,7 @@ from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Trip, Destination
+from .forms import TripForm
 
 
 def index(request):
@@ -37,7 +38,13 @@ class TripDetailView(UserPassesTestMixin, DetailView):
 
 class CreateTripView(LoginRequiredMixin, CreateView):
     """View for creating a new trip."""
-    pass
+
+    template_name = "trips/create_trip.html"
+    form_class = TripForm
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 class CreateDestinationView(LoginRequiredMixin, CreateView):

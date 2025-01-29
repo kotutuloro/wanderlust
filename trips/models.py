@@ -5,6 +5,7 @@ Models for the trips app.
 from nanoid import generate as generate_nanoid
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 
 
 def generate_random_slug():
@@ -25,6 +26,9 @@ class Trip(models.Model):
     end_date = models.DateField(null=True, blank=True)
     scheduled = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        return reverse("trips:trip-detail", kwargs={"slug": self.slug})
 
     def __str__(self):
         return f'{self.title} ({self.slug})'
