@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>
+    Oopsies:
+    {% block error_code %}
+    {% endblock error_code %}
+  </h1>
+  <h2>
+    {% block error_message %}
+    {% endblock error_message %}
+  </h2>
+{% endblock content %}

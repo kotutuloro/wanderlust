@@ -1,0 +1,7 @@
+{% extends "error-base.html" %}
+{% block error_code %}
+  403
+{% endblock error_code %}
+{% block error_message %}
+  {{ exception|default:"You don't have access to this." }}
+{% endblock error_message %}
