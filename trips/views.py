@@ -36,6 +36,11 @@ class TripDetailView(UserPassesTestMixin, DetailView):
     def test_func(self):
         return self.request.user == self.get_object().owner
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["create_dest_form"] = DestinationForm(only_trip=self.object)
+        return context
+
 
 class CreateTripView(LoginRequiredMixin, CreateView):
     """View for creating a new trip."""

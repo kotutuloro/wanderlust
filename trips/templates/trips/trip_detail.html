@@ -13,4 +13,22 @@
     {% endif %}
   </p>
   <p>Notes: {{ trip.notes }}</p>
+  <div>
+    Destinations:
+    <ul>
+      {% for dest in trip.destination_set.all %}
+        <li>
+          <div>{{ dest.name }}</div>
+          {% if dest.start_time %}<div>Starts at: {{ dest.start_time }}</div>{% endif %}
+          {% if dest.end_time %}<div>Ends at: {{ dest.end_time }}</div>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <h3>Create a new destination</h3>
+    <form action="{% url "trips:create-dest" trip.slug %}" method="post">
+      {% csrf_token %}
+      {{ create_dest_form }}
+      <button type="submit">Create Destination</button>
+    </form>
+  </div>
 {% endblock content %}
