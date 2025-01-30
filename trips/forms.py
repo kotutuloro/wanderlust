@@ -1,12 +1,24 @@
 # accounts/forms.py
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import ModelForm, ModelChoiceField, DateInput, DateTimeInput
 from .models import Trip, Destination
+
+
+class UIDateInput(DateInput):
+    input_type = "date"
+
+
+class UIDateTimeInput(DateTimeInput):
+    input_type = "datetime-local"
 
 
 class TripForm(ModelForm):
     class Meta:
         model = Trip
         fields = ("title", "start_date", "end_date", "scheduled", "notes")
+        widgets = {
+            "start_date": UIDateInput(),
+            "end_date": UIDateInput(),
+        }
 
 
 class DestinationForm(ModelForm):
@@ -16,6 +28,10 @@ class DestinationForm(ModelForm):
     class Meta:
         model = Destination
         fields = ("trip", "name", "start_time", "end_time")
+        widgets = {
+            "start_time": UIDateTimeInput(),
+            "end_time": UIDateTimeInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         only_trip = kwargs.pop("only_trip", None)
