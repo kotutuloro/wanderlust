@@ -61,10 +61,10 @@ class CreateDestinationView(UserPassesTestMixin, CreateView):
     permission_denied_message = "You don't have access to this trip."
 
     def setup(self, request, *args, **kwargs):
+        self.trip = None
         trip_slug = kwargs.get("trip_slug")
         if trip_slug:
-            trip = get_object_or_404(Trip, slug=trip_slug)
-            self.trip = trip
+            self.trip = get_object_or_404(Trip, slug=trip_slug)
 
         return super().setup(request, *args, **kwargs)
 
