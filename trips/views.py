@@ -68,13 +68,10 @@ class CreateDestinationView(UserPassesTestMixin, CreateView):
             return self.request.user == self.trip.owner
         return True
 
-    def get_initial(self):
-        if self.trip:
-            self.initial["trip"] = self.trip
-        return self.initial
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        if self.trip:
+            kwargs["only_trip"] = self.trip
         kwargs["user"] = self.request.user
         return kwargs
 

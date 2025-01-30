@@ -18,9 +18,19 @@ class DestinationForm(ModelForm):
         fields = ("trip", "name", "start_time", "end_time")
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
+        only_trip = kwargs.pop("only_trip", None)
+        self.user = kwargs.pop("user", None)
+        if not (only_trip or self.user):
+            raise Exception(
+                "DestinationForm requires either a user or a specific trip")
         super().__init__(*args, **kwargs)
-        self.fields['trip'].queryset = Trip.objects.filter(owner=self.user)
+
+        if only_trip:
+            self.fields['trip'].queryset = Trip.objects.filter(pk=only_trip.pk)
+            self.fields['trip'].initial = only_trip
+            self.fields['trip'].disabled = True
+        else:
+            self.fields['trip'].queryset = Trip.objects.filter(owner=self.user)
 
     def clean_trip(self):
         return (self.cleaned_data['trip']
