@@ -2,12 +2,13 @@
 Views for the trips app.
 """
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse
 
 from .models import Trip, Destination
-from .forms import TripForm
+from .forms import TripForm, DestinationForm
 
 
 def index(request):
@@ -47,6 +48,35 @@ class CreateTripView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class CreateDestinationView(LoginRequiredMixin, CreateView):
+class CreateDestinationView(UserPassesTestMixin, CreateView):
     """View for creating a new destination."""
-    pass
+
+    template_name = "trips/create_destination.html"
+    form_class = DestinationForm
+    permission_denied_message = "You don't have access to this trip."
+
+    def setup(self, request, *args, **kwargs):
+        trip_slug = kwargs.get("trip_slug")
+        if trip_slug:
+            trip = get_object_or_404(Trip, slug=trip_slug)
+            self.trip = trip
+
+        return super().setup(request, *args, **kwargs)
+
+    def test_func(self):
+        if self.trip:
+            return self.request.user == self.trip.owner
+        return True
+
+    def get_initial(self):
+        if self.trip:
+            self.initial["trip"] = self.trip
+        return self.initial
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("trips:trip-detail", args=[self.object.trip.slug])
