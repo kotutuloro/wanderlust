@@ -25,7 +25,8 @@
       {% endfor %}
     </ul>
     <h3>Create a new destination</h3>
-    <form action="{% url "trips:create-dest" trip.slug %}" method="post">
+    <form action="{% url "trips:create-dest-with-trip" trip.slug %}"
+          method="post">
       {% csrf_token %}
       {{ create_dest_form }}
       <button type="submit">Create Destination</button>

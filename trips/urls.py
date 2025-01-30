@@ -13,7 +13,6 @@ urlpatterns = [
     path("trip/<slug:slug>/",
          views.TripDetailView.as_view(), name="trip-detail"),
     path("trip/<slug:trip_slug>/destination/new/",
-         views.CreateDestinationView.as_view(), name="create-dest"),
-    path("destination/new/", views.CreateDestinationView.as_view(),
-         name="create-dest-no-trip")
+         views.CreateDestinationView.as_view(), name="create-dest-with-trip"),
+    path("destination/new/", views.CreateDestinationView.as_view(), name="create-dest")
 ]
