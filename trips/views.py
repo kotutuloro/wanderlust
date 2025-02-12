@@ -7,7 +7,7 @@ from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse
 
-from .models import Trip, Destination
+from .models import Trip
 from .forms import TripForm, DestinationForm
 
 
