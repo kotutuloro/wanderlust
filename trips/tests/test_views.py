@@ -85,12 +85,66 @@ class UserTripsViewTests(LoginRequiredTestMixin, TestCase):
             response.context["create_dest_form"], DestinationForm)
 
 
-class TripDetailViewTests(TestCase):
+class TripDetailViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.owner = User.objects.create(username="myuser")
-        self.trip = Trip.objects.create(owner=self.owner, title="test trip")
+        self.trip = Trip.objects.create(
+            owner=self.owner, title="test trip", notes="This is my super cool trip")
+        self.dest1 = Destination.objects.create(trip=self.trip, name="nasa")
+        self.dest2 = Destination.objects.create(trip=self.trip, name="arena")
+
         self.url = reverse("trips:trip-detail",
                            kwargs={'slug': self.trip.slug})
+        self.client.force_login(self.owner)
+
+    def test_show_trip_details(self):
+        """
+        A trip's details and destinations are displayed.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_detail.html")
+        self.assertContains(response, self.trip.title)
+        self.assertContains(response, self.trip.notes)
+        self.assertContains(response, self.dest1.name)
+        self.assertContains(response, self.dest2.name)
+
+    def test_no_other_destinations(self):
+        """
+        Destinations for other trips are not displayed.
+        """
+        other_trip = Trip.objects.create(
+            owner=self.owner, title="where is this")
+        other_dest = Destination.objects.create(
+            trip=other_trip, name="what is this")
+
+        other_owner_trip = Trip.objects.create(
+            owner=User.objects.create(), title="someone else")
+        other_owner_dest = Destination.objects.create(
+            trip=other_owner_trip, name="somewhere else")
+
+        response = self.client.get(self.url)
+        self.assertNotContains(response, other_dest.name)
+        self.assertNotContains(response, other_owner_dest.name)
+
+    def test_show_trip_details_only_for_owner(self):
+        """
+        A user cannot access details for someone else's trip.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+    def test_includes_destination_creation_form(self):
+        """
+        Context includes form for creating a destination.
+        """
+        response = self.client.get(self.url)
+        self.assertIsInstance(
+            response.context["create_dest_form"], DestinationForm)
 
 
 class CreateTripViewTests(TestCase):
