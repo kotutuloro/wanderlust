@@ -1,3 +1,4 @@
+import datetime
 from django.test import TestCase
 from django.urls import reverse
 
@@ -147,9 +148,54 @@ class TripDetailViewTests(LoginRequiredTestMixin, TestCase):
             response.context["create_dest_form"], DestinationForm)
 
 
-class CreateTripViewTests(TestCase):
+class CreateTripViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.url = reverse("trips:create-trip")
+
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.client.force_login(self.user)
+
+    def test_create_trip_get(self):
+        """
+        Displays the trip creation form on GET.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/create_trip.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+
+    def test_create_trip_post_valid_data(self):
+        """
+        Saves a trip creation and redirects on a valid POST request.
+        """
+        data = {
+            "title": "my cool trip",
+            "start_date": "2025-01-01",
+            "notes": "this is my very cool trip",
+        }
+        response = self.client.post(self.url, data)
+        trip = Trip.objects.first()
+        self.assertEqual(trip.owner.username, self.user.username)
+        self.assertEqual(trip.title, data["title"])
+        self.assertEqual(trip.start_date, datetime.date(2025, 1, 1))
+        self.assertEqual(trip.notes, data["notes"])
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': trip.slug}))
+
+    def test_create_trip_post_invalid_data(self):
+        """
+        Does not save a trip creation on an invalid POST request.
+        """
+
+        data = {
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/create_trip.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "This field is required.")
+        self.assertEqual(Trip.objects.count(), 0)
 
 
 class CreateDestinationViewTests(TestCase):
