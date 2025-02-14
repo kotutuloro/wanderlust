@@ -307,9 +307,123 @@ class CreateDestinationViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(Destination.objects.count(), 0)
 
 
-class CreateDestinationViewWithTripTests(TestCase):
+class CreateDestinationViewWithTripTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
-        self.owner = User.objects.create(username="myuser")
-        self.trip = Trip.objects.create(owner=self.owner, title="test trip")
+        self.user = User.objects.create(username="myuser")
+        self.trip = Trip.objects.create(owner=self.user, title="test trip")
         self.url = reverse("trips:create-dest-with-trip",
-                           kwargs={'slug': self.trip.slug})
+                           kwargs={'trip_slug': self.trip.slug})
+
+        self.client.force_login(self.user)
+
+    def test_create_destination_with_trip_get(self):
+        """
+        Displays the destination creation form on GET.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/create_destination.html")
+        self.assertIsInstance(response.context["form"], DestinationForm)
+
+    def test_create_destination_with_nonexistant_trip_get(self):
+        """
+        Returns 404 if the trip slug in url does not exist on GET.
+        """
+        self.trip.delete()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_destination_with_unowned_trip_get(self):
+        """
+        Returns 403 if the trip slug in url does not belong to owner on GET.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+    def test_form_trip_displays_limited_to_trip(self):
+        """
+        Only displays url trip as trip option in form on GET.
+        """
+        other_trip = Trip.objects.create(
+            owner=self.user, title="some other trip")
+
+        response = self.client.get(self.url)
+        trip_choices = response.context["form"].fields["trip"]
+        self.assertQuerySetEqual(trip_choices.queryset, [self.trip])
+        self.assertContains(response, self.trip.title)
+        self.assertNotContains(response, other_trip.title)
+
+    def test_create_destination_with_trip_post_valid_data(self):
+        """
+        Saves a destination creation and redirects on a valid POST request.
+        """
+        data = {
+            "trip": self.trip.pk,
+            "name": "nasa",
+            "start_time": "2025-01-01 12:01Z",
+        }
+
+        response = self.client.post(self.url, data)
+        dest = Destination.objects.first()
+        self.assertEqual(dest.name, data["name"])
+        self.assertEqual(dest.start_time, datetime.datetime(
+            2025, 1, 1, 12, 1, tzinfo=datetime.timezone.utc))
+        self.assertEqual(dest.trip.pk, self.trip.pk)
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': self.trip.slug}))
+
+    def test_create_destination_with_trip_post_invalid_data(self):
+        """
+        Does not save a destination creation on an invalid POST request.
+        """
+        data = {
+            "trip": self.trip.pk,
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/create_destination.html")
+        self.assertIsInstance(response.context["form"], DestinationForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "This field is required.")
+        self.assertEqual(Destination.objects.count(), 0)
+
+    def test_create_destination_with_trip_post_unrelated_trip(self):
+        """
+        Does not accept trips that are not in the url on POST.
+        """
+        other_trip = Trip.objects.create(
+            owner=self.user, title="some other trip")
+        data = {
+            "trip": other_trip.pk,
+            "name": "nasa",
+            "start_time": "2025-01-01 12:01Z",
+        }
+
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/create_destination.html")
+        self.assertIsInstance(response.context["form"], DestinationForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "Select a valid choice.")
+        self.assertEqual(Destination.objects.count(), 0)
+
+    def test_create_destination_with_trip_post_unowned(self):
+        """
+        Does not accept trips that are not owned by the user on POST.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+        data = {
+            "trip": self.trip.pk,
+            "name": "nasa",
+            "start_time": "2025-01-01 12:01Z",
+        }
+
+        response = self.client.post(self.url, data)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Destination.objects.count(), 0)
