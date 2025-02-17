@@ -77,7 +77,7 @@ class CreateDestinationView(UserPassesTestMixin, CreateView):
     def test_func(self):
         if self.trip:
             return self.request.user == self.trip.owner
-        return True
+        return self.request.user.is_authenticated
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
