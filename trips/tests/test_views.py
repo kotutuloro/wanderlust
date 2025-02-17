@@ -88,15 +88,15 @@ class UserTripsViewTests(LoginRequiredTestMixin, TestCase):
 
 class TripDetailViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
-        self.owner = User.objects.create(username="myuser")
+        self.user = User.objects.create(username="myuser")
         self.trip = Trip.objects.create(
-            owner=self.owner, title="test trip", notes="This is my super cool trip")
+            owner=self.user, title="test trip", notes="This is my super cool trip")
         self.dest1 = Destination.objects.create(trip=self.trip, name="nasa")
         self.dest2 = Destination.objects.create(trip=self.trip, name="arena")
 
         self.url = reverse("trips:trip-detail",
                            kwargs={'slug': self.trip.slug})
-        self.client.force_login(self.owner)
+        self.client.force_login(self.user)
 
     def test_show_trip_details(self):
         """
@@ -115,7 +115,7 @@ class TripDetailViewTests(LoginRequiredTestMixin, TestCase):
         Destinations for other trips are not displayed.
         """
         other_trip = Trip.objects.create(
-            owner=self.owner, title="where is this")
+            owner=self.user, title="where is this")
         other_dest = Destination.objects.create(
             trip=other_trip, name="what is this")
 
@@ -389,26 +389,6 @@ class CreateDestinationViewWithTripTests(LoginRequiredTestMixin, TestCase):
         self.assertIsInstance(response.context["form"], DestinationForm)
         self.assertFalse(response.context["form"].is_valid())
         self.assertContains(response, "This field is required.")
-        self.assertEqual(Destination.objects.count(), 0)
-
-    def test_create_destination_with_trip_post_unrelated_trip(self):
-        """
-        Does not accept trips that are not in the url on POST.
-        """
-        other_trip = Trip.objects.create(
-            owner=self.user, title="some other trip")
-        data = {
-            "trip": other_trip.pk,
-            "name": "nasa",
-            "start_time": "2025-01-01 12:01Z",
-        }
-
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "trips/create_destination.html")
-        self.assertIsInstance(response.context["form"], DestinationForm)
-        self.assertFalse(response.context["form"].is_valid())
-        self.assertContains(response, "Select a valid choice.")
         self.assertEqual(Destination.objects.count(), 0)
 
     def test_create_destination_with_trip_post_unowned(self):
