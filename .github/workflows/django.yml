@@ -20,6 +20,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipenv --user
           pipenv install
+      - name: Set up Postgres
+        run: |
+          sudo systemctl start postgresql.service
+          sudo -u postgres createuser -s runner
       - name: Run Tests
         run: |
           pipenv run python manage.py test
