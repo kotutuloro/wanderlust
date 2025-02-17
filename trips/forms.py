@@ -49,5 +49,7 @@ class DestinationForm(ModelForm):
             self.fields['trip'].queryset = Trip.objects.filter(owner=self.user)
 
     def clean_trip(self):
-        return (self.cleaned_data['trip']
-                or Trip.objects.create(owner=self.user, title=self.data.get('name')))
+        if self.cleaned_data['trip']:
+            return self.cleaned_data['trip']
+        if self.user and self.data.get('name'):
+            return Trip.objects.create(owner=self.user, title=self.data.get('name'))
