@@ -25,7 +25,7 @@ class AccountView(LoginRequiredMixin, DetailView):
         return self.request.user
 
 
-class AccountEditView(LoginRequiredMixin, UpdateView):
+class EditAccountView(LoginRequiredMixin, UpdateView):
     """View for editing account details."""
     model = User
     form_class = AccountForm

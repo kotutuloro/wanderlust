@@ -79,7 +79,7 @@ class AccountViewTests(LoginRequiredTestMixin, TestCase):
         self.assertContains(response, self.user.first_name)
 
 
-class AccountEditViewTests(LoginRequiredTestMixin, TestCase):
+class EditAccountViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.url = reverse("accounts:edit")
 
@@ -87,7 +87,7 @@ class AccountEditViewTests(LoginRequiredTestMixin, TestCase):
             username="myuser", email="my@user.me", first_name="kiko")
         self.client.force_login(self.user)
 
-    def test_account_edit_view_get(self):
+    def test_edit_account_view_get(self):
         """
         Displays the user update form on GET.
         """
@@ -95,7 +95,7 @@ class AccountEditViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "registration/user_update_form.html")
 
-    def test_account_edit_post_valid_data(self):
+    def test_edit_account_post_valid_data(self):
         """
         Saves an account update and redirects on a valid POST request.
         """
@@ -109,7 +109,7 @@ class AccountEditViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(user.email, "")
         self.assertRedirects(response, reverse("accounts:settings"))
 
-    def test_account_edit_post_invalid_data(self):
+    def test_edit_account_post_invalid_data(self):
         """
         Does not save an account update on an invalid POST request.
         """
