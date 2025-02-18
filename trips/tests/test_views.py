@@ -458,3 +458,95 @@ class CreateDestinationViewWithTripTests(LoginRequiredTestMixin, TestCase):
         self.assertContains(
             response, "You don't have access to this trip.", status_code=403, html=True)
         self.assertEqual(Destination.objects.count(), 0)
+
+
+class DeleteDestinationViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.dest = Destination.objects.create(trip=self.trip, name="nasa")
+
+        self.url = reverse("trips:delete-dest",
+                           kwargs={'trip_slug': self.trip.slug, 'pk': self.dest.pk})
+        self.client.force_login(self.user)
+
+    def test_get_destination_delete_form(self):
+        """
+        Displays a form to delete a destination.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "trips/destination_confirm_delete.html")
+        self.assertContains(response, self.dest.name)
+        self.assertContains(response, self.trip.title)
+
+    def test_post_destination_delete_valid_data(self):
+        """
+        Deletes a destination and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': self.trip.slug}))
+        self.assertEqual(Destination.objects.count(), 0)
+
+    def test_destination_delete_only_for_owner(self):
+        """
+        Only allows trip owners to access the destination delete form.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        get_response = self.client.get(self.url)
+        self.assertContains(
+            get_response, "You don't have access to this trip.", status_code=403, html=True)
+
+        post_response = self.client.post(self.url)
+        self.assertContains(
+            post_response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
+
+    def test_destination_delete_nonexistant(self):
+        """
+        Returns 404 if the destination does not exist.
+        """
+        self.dest.delete()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+
+    def test_destination_delete_with_nonexistant_trip(self):
+        """
+        Returns 404 if the trip slug in url does not exist.
+        """
+        self.url = reverse("trips:delete-dest",
+                           kwargs={'trip_slug': "asfghjk", 'pk': self.dest.pk})
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
+
+    def test_destination_delete_with_wrong_trip(self):
+        """
+        Returns 404 if the trip slug does not match the destination's trip.
+        """
+        other_trip = Trip.objects.create(owner=self.user, title="another one")
+        self.dest.trip = other_trip
+        self.dest.save()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
