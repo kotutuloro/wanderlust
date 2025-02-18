@@ -126,3 +126,29 @@ class EditAccountViewTests(LoginRequiredTestMixin, TestCase):
 
         user = User.objects.first()
         self.assertEqual(user.email, prev_email)
+
+
+class DeleteAccountViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.url = reverse("accounts:delete")
+
+        self.user = User.objects.create(
+            username="myuser", email="my@user.me", first_name="kiko")
+        self.client.force_login(self.user)
+
+    def test_delete_account_view_get(self):
+        """
+        Displays the user delete form on GET.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "registration/user_confirm_delete.html")
+
+    def test_delete_account_post_valid_data(self):
+        """
+        Saves an account delete and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url)
+        self.assertEqual(User.objects.count(), 0)
+        self.assertRedirects(response, reverse("accounts:login"))
