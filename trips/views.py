@@ -3,7 +3,7 @@ Views for the trips app.
 """
 
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
@@ -57,6 +57,17 @@ class CreateTripView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+
+class EditTripView(UserPassesTestMixin, UpdateView):
+    """View for updating a trip."""
+    template_name_suffix = "_update_form"
+    model = Trip
+    form_class = TripForm
+    permission_denied_message = "You don't have access to this trip."
+
+    def test_func(self):
+        return self.request.user == self.get_object().owner
 
 
 class DeleteTripView(UserPassesTestMixin, DeleteView):

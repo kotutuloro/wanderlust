@@ -36,6 +36,9 @@
     </form>
   </div>
   <p>
+    <a href="{% url "trips:edit-trip" trip.slug %}">Edit this trip</a>
+  </p>
+  <p>
     <a href="{% url "trips:delete-trip" trip.slug %}">Delete this trip</a>
   </p>
 {% endblock content %}

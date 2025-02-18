@@ -198,6 +198,82 @@ class CreateTripViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(Trip.objects.count(), 0)
 
 
+class EditTripViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.url = reverse("trips:edit-trip",
+                           kwargs={'slug': self.trip.slug})
+
+        self.client.force_login(self.user)
+
+    def test_edit_trip_get(self):
+        """
+        Displays the trip update form on GET.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_update_form.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+
+    def test_edit_trip_post_valid_data(self):
+        """
+        Saves a trip update and redirects on a valid POST request.
+        """
+        data = {
+            "title": "my cool trip",
+            "start_date": "2025-01-01",
+            "notes": "this is my very cool trip",
+        }
+        response = self.client.post(self.url, data)
+        trip = Trip.objects.first()
+        self.assertEqual(trip.owner.username, self.user.username)
+        self.assertEqual(trip.title, data["title"])
+        self.assertEqual(trip.start_date, datetime.date(2025, 1, 1))
+        self.assertEqual(trip.notes, data["notes"])
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': trip.slug}))
+
+    def test_edit_trip_post_invalid_data(self):
+        """
+        Does not save a trip update on an invalid POST request.
+        """
+        prev_title = self.trip.title
+
+        data = {
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_update_form.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "This field is required.")
+        self.assertEqual(Trip.objects.first().title, prev_title)
+
+    def test_edit_trip_only_for_owner(self):
+        """
+        Does not allow non-owners to update trips.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+        prev_title = self.trip.title
+        data = {
+            "title": "my cool trip",
+            "start_date": "2025-01-01",
+            "notes": "this is my very cool trip",
+        }
+        response = self.client.post(self.url, data)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Trip.objects.first().title, prev_title)
+
+
 class DeleteTripViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.user = User.objects.create(username="myuser", password="testpw")
