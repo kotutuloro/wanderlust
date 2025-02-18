@@ -111,6 +111,33 @@ class CreateDestinationView(UserPassesTestMixin, CreateView):
         return reverse("trips:trip-detail", args=[self.object.trip.slug])
 
 
+class EditDestinationView(UserPassesTestMixin, UpdateView):
+    """View for deleting a destination."""
+    model = Destination
+    form_class = DestinationForm
+    template_name_suffix = "_update_form"
+    permission_denied_message = "You don't have access to this trip."
+
+    def setup(self, request, *args, **kwargs):
+        trip_slug = kwargs.get("trip_slug")
+        dest_pk = kwargs.get("pk")
+        trip = get_object_or_404(Trip, slug=trip_slug)
+        get_object_or_404(Destination, trip=trip, pk=dest_pk)
+
+        return super().setup(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.request.user == self.get_object().trip.owner
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("trips:trip-detail", args=[self.object.trip.slug])
+
+
 class DeleteDestinationView(UserPassesTestMixin, DeleteView):
     """View for deleting a destination."""
     model = Destination

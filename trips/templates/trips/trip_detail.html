@@ -22,6 +22,9 @@
           {% if dest.start_time %}<div>Starts at: {{ dest.start_time }}</div>{% endif %}
           {% if dest.end_time %}<div>Ends at: {{ dest.end_time }}</div>{% endif %}
           <div>
+            <a href="{% url "trips:edit-dest" trip.slug dest.pk %}">Edit this destination</a>
+          </div>
+          <div>
             <a href="{% url "trips:delete-dest" trip.slug dest.pk %}">Delete this destination</a>
           </div>
         </li>
