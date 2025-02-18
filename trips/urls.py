@@ -11,6 +11,8 @@ urlpatterns = [
     path("profile/", views.UserTripsView.as_view(), name="profile"),
     path("trip/new/", views.CreateTripView.as_view(), name="create-trip"),
     path("trip/<slug:slug>/", views.TripDetailView.as_view(), name="trip-detail"),
+    path("trip/<slug:slug>/delete",
+         views.DeleteTripView.as_view(), name="delete-trip"),
     path("trip/<slug:trip_slug>/destination/new/",
          views.CreateDestinationView.as_view(), name="create-dest-with-trip"),
     path("destination/new/", views.CreateDestinationView.as_view(), name="create-dest"),

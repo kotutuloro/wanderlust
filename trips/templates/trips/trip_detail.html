@@ -32,4 +32,7 @@
       <button type="submit">Create Destination</button>
     </form>
   </div>
+  <p>
+    <a href="{% url "trips:delete-trip" trip.slug %}">Delete this trip</a>
+  </p>
 {% endblock content %}

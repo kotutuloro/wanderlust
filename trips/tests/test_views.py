@@ -198,6 +198,57 @@ class CreateTripViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(Trip.objects.count(), 0)
 
 
+class DeleteTripViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.url = reverse("trips:delete-trip",
+                           kwargs={'slug': self.trip.slug})
+
+        self.client.force_login(self.user)
+
+    def test_get_trip_delete_form(self):
+        """
+        Displays a form to delete a trip.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_confirm_delete.html")
+        self.assertContains(response, self.trip.title)
+
+    def test_get_trip_delete_only_for_owner(self):
+        """
+        Only allows owners to access the trip delete form.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+    def test_post_trip_delete_valid_data(self):
+        """
+        Deletes a trip and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse("trips:profile"))
+        self.assertEqual(Trip.objects.count(), 0)
+
+    def test_post_trip_delete_only_for_owner(self):
+        """
+        Does not allow non-owners to delete trips.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.post(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Trip.objects.filter(pk=self.trip.pk).count(), 1)
+
+
 class CreateDestinationViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.url = reverse("trips:create-dest")
