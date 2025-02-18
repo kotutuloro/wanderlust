@@ -198,6 +198,133 @@ class CreateTripViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(Trip.objects.count(), 0)
 
 
+class EditTripViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.url = reverse("trips:edit-trip",
+                           kwargs={'slug': self.trip.slug})
+
+        self.client.force_login(self.user)
+
+    def test_edit_trip_get(self):
+        """
+        Displays the trip update form on GET.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_update_form.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+
+    def test_edit_trip_post_valid_data(self):
+        """
+        Saves a trip update and redirects on a valid POST request.
+        """
+        data = {
+            "title": "my cool trip",
+            "start_date": "2025-01-01",
+            "notes": "this is my very cool trip",
+        }
+        response = self.client.post(self.url, data)
+        trip = Trip.objects.first()
+        self.assertEqual(trip.owner.username, self.user.username)
+        self.assertEqual(trip.title, data["title"])
+        self.assertEqual(trip.start_date, datetime.date(2025, 1, 1))
+        self.assertEqual(trip.notes, data["notes"])
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': trip.slug}))
+
+    def test_edit_trip_post_invalid_data(self):
+        """
+        Does not save a trip update on an invalid POST request.
+        """
+        prev_title = self.trip.title
+
+        data = {
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_update_form.html")
+        self.assertIsInstance(response.context["form"], TripForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "This field is required.")
+        self.assertEqual(Trip.objects.first().title, prev_title)
+
+    def test_edit_trip_only_for_owner(self):
+        """
+        Does not allow non-owners to update trips.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+        prev_title = self.trip.title
+        data = {
+            "title": "my cool trip",
+            "start_date": "2025-01-01",
+            "notes": "this is my very cool trip",
+        }
+        response = self.client.post(self.url, data)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Trip.objects.first().title, prev_title)
+
+
+class DeleteTripViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.url = reverse("trips:delete-trip",
+                           kwargs={'slug': self.trip.slug})
+
+        self.client.force_login(self.user)
+
+    def test_get_trip_delete_form(self):
+        """
+        Displays a form to delete a trip.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/trip_confirm_delete.html")
+        self.assertContains(response, self.trip.title)
+
+    def test_get_trip_delete_only_for_owner(self):
+        """
+        Only allows owners to access the trip delete form.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+
+    def test_post_trip_delete_valid_data(self):
+        """
+        Deletes a trip and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse("trips:profile"))
+        self.assertEqual(Trip.objects.count(), 0)
+
+    def test_post_trip_delete_only_for_owner(self):
+        """
+        Does not allow non-owners to delete trips.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        response = self.client.post(self.url)
+        self.assertContains(
+            response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Trip.objects.filter(pk=self.trip.pk).count(), 1)
+
+
 class CreateDestinationViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.url = reverse("trips:create-dest")
@@ -407,3 +534,233 @@ class CreateDestinationViewWithTripTests(LoginRequiredTestMixin, TestCase):
         self.assertContains(
             response, "You don't have access to this trip.", status_code=403, html=True)
         self.assertEqual(Destination.objects.count(), 0)
+
+
+class EditDestinationViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.dest = Destination.objects.create(trip=self.trip, name="nasa")
+
+        self.update_data = {
+            "trip": self.trip.pk,
+            "name": "new name",
+            "start_time": "2025-01-01 12:01Z",
+        }
+        self.url = reverse("trips:edit-dest",
+                           kwargs={'trip_slug': self.trip.slug, 'pk': self.dest.pk})
+        self.client.force_login(self.user)
+
+    def test_get_destination_edit_form(self):
+        """
+        Displays the destination update form.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/destination_update_form.html")
+        self.assertIsInstance(response.context["form"], DestinationForm)
+
+    def test_form_trip_displays_limited_to_user(self):
+        """
+        Only displays trip options owned by user in form on GET.
+        """
+        trip1 = Trip.objects.create(owner=self.user, title="my cool trip")
+        trip2 = Trip.objects.create(owner=self.user, title="another trip")
+        other_trip = Trip.objects.create(
+            owner=User.objects.create(), title="someone else's trip")
+
+        response = self.client.get(self.url)
+        trip_choices = response.context["form"].fields["trip"]
+        self.assertQuerySetEqual(trip_choices.queryset,
+                                 [trip1, trip2, self.trip], ordered=False)
+        self.assertContains(response, trip1.title)
+        self.assertContains(response, trip2.title)
+        self.assertContains(response, self.trip.title)
+        self.assertNotContains(response, other_trip.title)
+
+    def test_post_destination_edit_valid_data(self):
+        """
+        Saves a destination update and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url, self.update_data)
+        dest = Destination.objects.get(pk=self.dest.pk)
+        self.assertEqual(dest.name, self.update_data["name"])
+        self.assertEqual(dest.start_time, datetime.datetime(
+            2025, 1, 1, 12, 1, tzinfo=datetime.timezone.utc))
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': self.trip.slug}))
+
+    def test_post_destination_edit_invalid_data(self):
+        """
+        Does not save a destination update on an invalid POST request.
+        """
+        prev_name = self.dest.name
+        data = {
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "trips/destination_update_form.html")
+        self.assertIsInstance(response.context["form"], DestinationForm)
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertContains(response, "This field is required.")
+
+        dest = Destination.objects.get(pk=self.dest.pk)
+        self.assertEqual(dest.name, prev_name)
+
+    def test_destination_edit_only_for_owner(self):
+        """
+        Only allows trip owners to edit the destination.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+        prev_name = self.dest.name
+
+        get_response = self.client.get(self.url)
+        self.assertContains(
+            get_response, "You don't have access to this trip.", status_code=403, html=True)
+
+        post_response = self.client.post(self.url, self.update_data)
+        self.assertContains(
+            post_response, "You don't have access to this trip.", status_code=403, html=True)
+        dest = Destination.objects.get(pk=self.dest.pk)
+        self.assertEqual(dest.name, prev_name)
+
+    def test_destination_edit_nonexistant(self):
+        """
+        Returns 404 if the destination does not exist.
+        """
+        self.dest.delete()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url, self.update_data)
+        self.assertEqual(post_response.status_code, 404)
+
+    def test_destination_edit_with_nonexistant_trip(self):
+        """
+        Returns 404 if the trip slug in url does not exist.
+        """
+        prev_name = self.dest.name
+        self.url = reverse("trips:edit-dest",
+                           kwargs={'trip_slug': "asfghjk", 'pk': self.dest.pk})
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url, self.update_data)
+        self.assertEqual(post_response.status_code, 404)
+        dest = Destination.objects.get(pk=self.dest.pk)
+        self.assertEqual(dest.name, prev_name)
+
+    def test_destination_edit_with_wrong_trip(self):
+        """
+        Returns 404 if the trip slug does not match the destination's trip.
+        """
+        prev_name = self.dest.name
+        other_trip = Trip.objects.create(owner=self.user, title="another one")
+        self.dest.trip = other_trip
+        self.dest.save()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        self.update_data["trip"] = other_trip.pk
+        post_response = self.client.post(self.url, self.update_data)
+        self.assertEqual(post_response.status_code, 404)
+        dest = Destination.objects.get(pk=self.dest.pk)
+        self.assertEqual(dest.name, prev_name)
+
+
+class DeleteDestinationViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.trip = Trip.objects.create(
+            owner=self.user, title="test trip", notes="This is my super cool trip")
+        self.dest = Destination.objects.create(trip=self.trip, name="nasa")
+
+        self.url = reverse("trips:delete-dest",
+                           kwargs={'trip_slug': self.trip.slug, 'pk': self.dest.pk})
+        self.client.force_login(self.user)
+
+    def test_get_destination_delete_form(self):
+        """
+        Displays a form to delete a destination.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, "trips/destination_confirm_delete.html")
+        self.assertContains(response, self.dest.name)
+        self.assertContains(response, self.trip.title)
+
+    def test_post_destination_delete_valid_data(self):
+        """
+        Deletes a destination and redirects on a valid POST request.
+        """
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse(
+            "trips:trip-detail", kwargs={'slug': self.trip.slug}))
+        self.assertEqual(Destination.objects.count(), 0)
+
+    def test_destination_delete_only_for_owner(self):
+        """
+        Only allows trip owners to access the destination delete form.
+        """
+        other_user = User.objects.create()
+        self.client.force_login(other_user)
+
+        get_response = self.client.get(self.url)
+        self.assertContains(
+            get_response, "You don't have access to this trip.", status_code=403, html=True)
+
+        post_response = self.client.post(self.url)
+        self.assertContains(
+            post_response, "You don't have access to this trip.", status_code=403, html=True)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
+
+    def test_destination_delete_nonexistant(self):
+        """
+        Returns 404 if the destination does not exist.
+        """
+        self.dest.delete()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+
+    def test_destination_delete_with_nonexistant_trip(self):
+        """
+        Returns 404 if the trip slug in url does not exist.
+        """
+        self.url = reverse("trips:delete-dest",
+                           kwargs={'trip_slug': "asfghjk", 'pk': self.dest.pk})
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
+
+    def test_destination_delete_with_wrong_trip(self):
+        """
+        Returns 404 if the trip slug does not match the destination's trip.
+        """
+        other_trip = Trip.objects.create(owner=self.user, title="another one")
+        self.dest.trip = other_trip
+        self.dest.save()
+
+        get_response = self.client.get(self.url)
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(self.url)
+        self.assertEqual(post_response.status_code, 404)
+        self.assertEqual(Destination.objects.filter(
+            pk=self.dest.pk).count(), 1)
