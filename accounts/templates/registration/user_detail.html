@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+{% block subtitle %}
+  User Settings
+{% endblock subtitle %}
 {% block content %}
-  <h2>Settings</h2>
+  <h2>User settings</h2>
   <p>Username: {{ object.username }}</p>
   <p>
     Password: [redacted] <a href="{% url 'accounts:password_change' %}">Change password</a>
