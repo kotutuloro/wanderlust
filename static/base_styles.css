@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  margin: 2rem;
+  background-color: rgb(149, 230, 211);
+}
+
+header.base {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(1, 186, 186, 0.66);
+  padding: 0.5rem 1rem;
+}
+
+header.base nav {
+  text-align: right;
+  list-style-type: none;
+}
+
+main {
+  border: 2px solid black;
+  padding: 1rem;
+}
+
+footer {
+  width: 100%;
+  text-align: center;
+}
