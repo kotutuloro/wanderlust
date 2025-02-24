@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block subtitle %}
   Travel Idea Tracker
 {% endblock subtitle %}
 {% block content %}
-  <h1>Wanderlust</h1>
-  <h2>Your travel idea tracker</h2>
+  <link rel="stylesheet" href="{% static "trips/index_styles.css" %}" />
+  <h1 class="main-title">Wander&shy;lust</h1>
+  <h2 class="main-subtitle">Your travel idea tracker</h2>
 {% endblock content %}

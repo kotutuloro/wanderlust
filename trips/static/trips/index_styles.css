@@ -1,0 +1,21 @@
+main,
+footer {
+  border: none;
+  background-color: transparent;
+  color: azure;
+  text-shadow: 0.125em 0.125em 4px rgba(1, 186, 186, 1);
+}
+
+main {
+  text-align: center;
+  font-size: 3em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow-wrap: break-word;
+}
+
+.main-title {
+  text-transform: uppercase;
+  text-decoration: overline underline white;
+}
