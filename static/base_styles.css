@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  min-height: 100vh;
+  max-width: 100vw;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  background: url("images/tmp-background.jpg") rgb(149, 230, 211) fixed
+    center/cover no-repeat;
+}
+
+header.base,
+footer {
+  background-color: rgba(1, 186, 186, 0.66);
+  padding: 0.5rem 1rem;
+}
+
+header.base {
+  display: flex;
+  justify-content: space-between;
+}
+
+header.base nav {
+  text-align: right;
+  list-style-type: none;
+}
+
+main {
+  border: 2px solid black;
+  padding: 1rem;
+  flex: 1;
+  background-color: rgba(240, 255, 255, 0.626);
+}
+
+footer {
+  text-align: center;
+}

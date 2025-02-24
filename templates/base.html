@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,37 +7,54 @@
     <meta name="keywords" content="travel" />
     <meta name="description"
           content="Keep track of the travelling you want to do." />
-    <title>Wanderlust</title>
+    <title>Wanderlust -
+      {% block subtitle %}
+      {% endblock subtitle %}
+    </title>
+    <link rel="stylesheet" href="{% static "base_styles.css" %}" />
   </head>
   <body>
-    <nav>
-      <ul>
-        {% if user.is_authenticated %}
-          <li>
-            <a href="{% url "trips:profile" %}">My Trips</a>
-          </li>
-          <li>
-            <a href="{% url "accounts:settings" %}">Settings</a>
-          </li>
-          <li>
-            <form action="{% url "accounts:logout" %}" method="post">
-              {% csrf_token %}
-              <button type="submit">Log Out</button>
-            </form>
-          </li>
-        {% else %}
-          <li>
-            <a href="{% url "accounts:login" %}">Log In</a>
-          </li>
-          <li>
-            <a href="{% url "accounts:signup" %}">Sign Up</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
+    <header class="base">
+      <div class="icon">
+        <a href={% url "trips:index" %}>
+          <img src="https://placehold.co/400"
+               alt="homepage icon"
+               height="50px"
+               width="50px" />
+        </a>
+      </div>
+      <nav>
+        <ul>
+          {% if user.is_authenticated %}
+            <li>
+              <a href="{% url "trips:profile" %}">My Trips</a>
+            </li>
+            <li>
+              <a href="{% url "accounts:settings" %}">Settings</a>
+            </li>
+            <li>
+              <form action="{% url "accounts:logout" %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Log Out</button>
+              </form>
+            </li>
+          {% else %}
+            <li>
+              <a href="{% url "accounts:login" %}">Log In</a>
+            </li>
+            <li>
+              <a href="{% url "accounts:signup" %}">Sign Up</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
     <main>
       {% block content %}
       {% endblock content %}
     </main>
+    <footer>
+      Created by <a href="https://kiko.codes">Kiko Otutuloro</a> © 2025
+    </footer>
   </body>
 </html>
