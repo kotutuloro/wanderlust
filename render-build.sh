@@ -8,7 +8,7 @@ pipenv install
 export DJANGO_SETTINGS_MODULE="config.settings.production"
 
 # Convert static asset files
-python manage.py collectstatic -n --no-input
+python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
