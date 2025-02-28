@@ -9,6 +9,8 @@ psycopg = "*"
 nanoid = "*"
 gunicorn = "*"
 uvicorn = "*"
+dj-database-url = "*"
+whitenoise = {extras = ["brotli"], version = "*"}
 
 [dev-packages]
 djlint = "*"
