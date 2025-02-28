@@ -9,6 +9,7 @@ psycopg = "*"
 nanoid = "*"
 gunicorn = "*"
 uvicorn = "*"
+dj-database-url = "*"
 
 [dev-packages]
 djlint = "*"
