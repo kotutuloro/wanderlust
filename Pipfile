@@ -12,6 +12,7 @@ nanoid = "*"
 djlint = "*"
 pylint = "*"
 pylint-django = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.13"
