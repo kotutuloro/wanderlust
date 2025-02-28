@@ -1,3 +1,5 @@
+import os
+
 from .base import *
 
 import dj_database_url
@@ -16,6 +18,7 @@ DATABASES = {
 }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
