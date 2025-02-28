@@ -7,6 +7,7 @@ name = "pypi"
 django = "*"
 psycopg = "*"
 nanoid = "*"
+django-debug-toolbar = "*"
 
 [dev-packages]
 djlint = "*"
