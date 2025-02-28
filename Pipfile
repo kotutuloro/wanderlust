@@ -7,12 +7,14 @@ name = "pypi"
 django = "*"
 psycopg = "*"
 nanoid = "*"
-django-debug-toolbar = "*"
+gunicorn = "*"
+uvicorn = "*"
 
 [dev-packages]
 djlint = "*"
 pylint = "*"
 pylint-django = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.13"

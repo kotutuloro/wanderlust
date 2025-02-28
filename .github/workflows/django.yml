@@ -26,4 +26,4 @@ jobs:
           sudo -u postgres createuser -s runner
       - name: Run Tests
         run: |
-          pipenv run python manage.py test
+          pipenv run python manage.py test --settings config.settings.test
