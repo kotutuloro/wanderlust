@@ -8,6 +8,8 @@ django = "*"
 psycopg = "*"
 nanoid = "*"
 django-debug-toolbar = "*"
+gunicorn = "*"
+uvicorn = "*"
 
 [dev-packages]
 djlint = "*"
