@@ -189,8 +189,9 @@ class SearchLocationView(LoginRequiredMixin, View):
             props = feature.get("properties")
             if props:
                 results.append({
+                    "mapbox_id": props.get("mapbox_id"),
                     "name": props.get("name"),
-                    "place": props.get("place_formatted")
+                    "place": props.get("place_formatted"),
                 })
 
         return JsonResponse({"results": results})

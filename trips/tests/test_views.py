@@ -820,11 +820,27 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
 
         expected = {
             "results": [
-                {"name": "Nemobrug", "place": "1011 VX Amsterdam, Netherlands"},
-                {"name": "Nemours", "place": "Seine-et-Marne, France"},
-                {"name": "Nemojov", "place": "Hradec Králové, Czech Republic"},
-                {"name": "Nemocón", "place": "Cundinamarca, Colombia"},
-                {"name": "Nemo", "place": "Texas, United States"},
+                {
+                    "mapbox_id": "address.1255672540378118",
+                    "name": "Nemobrug",
+                    "place": "1011 VX Amsterdam, Netherlands"
+                }, {
+                    "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
+                    "name": "Nemours",
+                    "place": "Seine-et-Marne, France"
+                }, {
+                    "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
+                    "name": "Nemojov",
+                    "place": "Hradec Králové, Czech Republic"
+                }, {
+                    "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
+                    "name": "Nemocón",
+                    "place": "Cundinamarca, Colombia"
+                }, {
+                    "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
+                    "name": "Nemo",
+                    "place": "Texas, United States"
+                },
             ]
         }
         self.assertEqual(response.json(), expected)
@@ -867,7 +883,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
 
         search_text = "nemo"
         response = self.client.get(self.url, query_params={
-                                   "query": search_text})
+            "query": search_text})
 
         mapbox_params = {
             "access_token": self.mapbox_access_token,
