@@ -21,4 +21,6 @@ urlpatterns = [
          views.EditDestinationView.as_view(), name="edit-dest"),
     path("trip/<slug:trip_slug>/destination/<int:pk>/delete/",
          views.DeleteDestinationView.as_view(), name="delete-dest"),
+    path("destination/loc-search/",
+         views.SearchLocationView.as_view(), name="search-loc")
 ]

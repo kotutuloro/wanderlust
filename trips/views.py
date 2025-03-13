@@ -2,10 +2,13 @@
 Views for the trips app.
 """
 
+import os
+import requests
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import View, ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
+from django.http import JsonResponse
 
 from .models import Trip, Destination
 from .forms import TripForm, DestinationForm
@@ -156,3 +159,42 @@ class DeleteDestinationView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("trips:trip-detail", args=[self.object.trip.slug])
+
+
+class SearchLocationView(LoginRequiredMixin, View):
+    """View for searching a location with Mapbox."""
+
+    def get(self, request, *args, **kwargs):
+        q = request.GET.get("query")
+        if not q:
+            return JsonError(400, query="Missing search query")
+
+        mapbox_access_token = os.environ["MAPBOX_ACCESS_TOKEN"]
+        params = {
+            "q": q,
+            "access_token": mapbox_access_token,
+        }
+        response = requests.get(
+            "https://api.mapbox.com/search/geocode/v6/forward", params=params)
+
+        if not response.ok:
+            err = {
+                "reason": response.reason,
+                "response": response.json()
+            }
+            return JsonError(502, mapbox=err)
+
+        results = []
+        for feature in response.json()["features"]:
+            props = feature.get("properties")
+            if props:
+                results.append({
+                    "name": props.get("name"),
+                    "place": props.get("place_formatted")
+                })
+
+        return JsonResponse({"results": results})
+
+
+def JsonError(status, *args, **kwargs):
+    return JsonResponse({"errors": kwargs}, status=status)
