@@ -11,6 +11,7 @@ gunicorn = "*"
 uvicorn = "*"
 dj-database-url = "*"
 whitenoise = {extras = ["brotli"], version = "*"}
+requests = "*"
 
 [dev-packages]
 djlint = "*"
