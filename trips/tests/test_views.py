@@ -3,6 +3,7 @@ import datetime
 from unittest import mock
 from django.test import TestCase
 from django.urls import reverse
+from requests import Response as r_Response
 
 from ..models import Trip, Destination
 from ..forms import TripForm, DestinationForm
@@ -797,11 +798,12 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         Calls the external api and returns a modified version of the response.
         """
-        mock_response = mock.MagicMock()
-        mock_response.status_code = 200
+        ext_response = r_Response()
+        ext_response.status_code = 200
+        ext_response.json = mock.MagicMock()
         with open(get_sample_file("mapbox_geocode_response.json")) as f:
-            mock_response.json.return_value = json.load(f)
-        mock_requests.get.return_value = mock_response
+            ext_response.json.return_value = json.load(f)
+        mock_requests.get.return_value = ext_response
 
         search_text = "nemo"
         response = self.client.get(self.url, query_params={
@@ -816,14 +818,16 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.assert_called_once_with(
             self.mapbox_url, params=mapbox_params)
 
-        expected = [
-            {"name": "Nemobrug", "place_formatted": "1011 VX Amsterdam, Netherlands"},
-            {"name": "Nemours", "place_formatted": "Seine-et-Marne, France"},
-            {"name": "Nemojov", "place_formatted": "Hradec Králové, Czech Republic"},
-            {"name": "Nemocón", "place_formatted": "Cundinamarca, Colombia"},
-            {"name": "Nemo", "place_formatted": "Texas, United States"},
-        ]
-        self.assertJSONEqual(response.json(), json.dumps(expected))
+        expected = {
+            "results": [
+                {"name": "Nemobrug", "place": "1011 VX Amsterdam, Netherlands"},
+                {"name": "Nemours", "place": "Seine-et-Marne, France"},
+                {"name": "Nemojov", "place": "Hradec Králové, Czech Republic"},
+                {"name": "Nemocón", "place": "Cundinamarca, Colombia"},
+                {"name": "Nemo", "place": "Texas, United States"},
+            ]
+        }
+        self.assertEqual(response.json(), expected)
 
     def test_errors_on_empty_access_token(self, mock_requests):
         """
@@ -841,8 +845,9 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         Returns 400 if the search term is empty.
         """
         response = self.client.get(self.url, query_params={"query": ""})
-
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["errors"]["query"],
+                         "Missing search query")
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
 
@@ -850,13 +855,15 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         Returns a 502 if the external API returns an error.
         """
-        mock_response = mock.MagicMock()
-        mock_response.status_code = 401
-        mock_response.json.return_value = {
+        ext_response = r_Response()
+        ext_response.status_code = 401
+        ext_response.json = mock.MagicMock()
+        expected_err = {
             "error_code": "INVALID_TOKEN",
             "message": "Not Authorized - Invalid Token"
         }
-        mock_requests.get.return_value = mock_response
+        ext_response.json.return_value = expected_err
+        mock_requests.get.return_value = ext_response
 
         search_text = "nemo"
         response = self.client.get(self.url, query_params={
@@ -870,4 +877,5 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
             self.mapbox_url, params=mapbox_params)
 
         self.assertEqual(response.status_code, 502)
-        self.assertJSONEqual(response.json(), "")
+        self.assertEqual(response.json()["errors"]["mapbox"]["response"],
+                         expected_err)
