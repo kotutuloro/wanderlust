@@ -778,9 +778,6 @@ class DeleteDestinationViewTests(LoginRequiredTestMixin, TestCase):
 class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
     def setUp(self):
         self.url = reverse("trips:search-loc")
-        self.ajax_headers = {
-            "X-Requested-With": "XMLHttpRequest",
-        }
 
         self.mapbox_access_token = "my-cool-mapbox-api-token"
         self.mapbox_url = "https://api.mapbox.com/search/geocode/v6/forward"
@@ -807,8 +804,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.return_value = mock_response
 
         search_text = "nemo"
-        response = self.client.get(
-            self.url, headers=self.ajax_headers, query_params={"query": search_text})
+        response = self.client.get(self.url, query_params={
+                                   "query": search_text})
 
         self.assertEqual(response.status_code, 200)
 
@@ -833,9 +830,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         Errors if no mapbox access token is set.
         """
         with mock.patch.dict("os.environ", {}, clear=True):
-            with self.assertRaises(KeyError):
-                self.client.get(self.url, headers=self.ajax_headers,
-                                query_params={"query": "abc"})
+            with self.assertRaisesMessage(KeyError, "MAPBOX_ACCESS_TOKEN"):
+                self.client.get(self.url, query_params={"query": "abc"})
 
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
@@ -844,18 +840,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         Returns 400 if the search term is empty.
         """
-        response = self.client.get(
-            self.url, headers=self.ajax_headers, query_params={"query": ""})
+        response = self.client.get(self.url, query_params={"query": ""})
 
-        self.assertEqual(response.status_code, 400)
-        mock_requests.assert_not_called()
-        mock_requests.get.assert_not_called()
-
-    def test_bad_request_without_ajax(self, mock_requests):
-        """
-        Returns 400 if the request is not made using ajax.
-        """
-        response = self.client.get(self.url, query_params={"query": "abc"})
         self.assertEqual(response.status_code, 400)
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
@@ -873,8 +859,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.return_value = mock_response
 
         search_text = "nemo"
-        response = self.client.get(
-            self.url, headers=self.ajax_headers, query_params={"query": search_text})
+        response = self.client.get(self.url, query_params={
+                                   "query": search_text})
 
         mapbox_params = {
             "access_token": self.mapbox_access_token,
