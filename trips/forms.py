@@ -1,5 +1,7 @@
 # accounts/forms.py
-from django.forms import ModelForm, ModelChoiceField, DateInput, DateTimeInput
+from django.forms import (ModelForm, ModelChoiceField, DateInput,
+                          DateTimeInput, HiddenInput, CharField, TextInput)
+from django.urls import reverse_lazy
 from .models import Trip, Destination
 
 
@@ -25,10 +27,18 @@ class DestinationForm(ModelForm):
     trip = ModelChoiceField(queryset=Trip.objects, required=False,
                             empty_label="--- (Create a new trip for this destination) ---")
 
+    location = CharField(required=False,
+                         widget=TextInput(attrs={
+                             "data-url": reverse_lazy("trips:search-loc"),
+                             "id": "destination-location-input",
+                         }))
+
     class Meta:
         model = Destination
-        fields = ("trip", "name", "start_time", "end_time")
+        fields = ("trip", "name", "location",
+                  "mapbox_id", "start_time", "end_time")
         widgets = {
+            "mapbox_id": HiddenInput(),
             "start_time": UIDateTimeInput(),
             "end_time": UIDateTimeInput(),
         }
