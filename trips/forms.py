@@ -28,9 +28,13 @@ class DestinationForm(ModelForm):
                             empty_label="--- (Create a new trip for this destination) ---")
 
     location = CharField(required=False,
+                         template_name="trips/location_search_field_snippet.html",
                          widget=TextInput(attrs={
-                             "data-url": reverse_lazy("trips:search-loc"),
-                             "id": "destination-location-input",
+                             "placeholder": "(Search for a new location)",
+                             "hx-get": reverse_lazy("trips:search-loc"),
+                             "hx-target": "next #id_location_results",
+                             "hx-swap": "outerHTML",
+                             "hx-trigger": "input delay:250ms",
                          }))
 
     class Meta:
