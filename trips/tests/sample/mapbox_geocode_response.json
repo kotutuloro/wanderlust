@@ -1,0 +1,215 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "address.1255672540378118",
+      "geometry": { "type": "Point", "coordinates": [4.91072, 52.374701] },
+      "properties": {
+        "mapbox_id": "address.1255672540378118",
+        "feature_type": "street",
+        "full_address": "Mr. J.J. Van Der Veldebrug, 1011 VX Amsterdam, Netherlands",
+        "name": "Nemobrug",
+        "name_preferred": "Mr. J.J. Van Der Veldebrug",
+        "coordinates": { "longitude": 4.91072, "latitude": 52.374701 },
+        "place_formatted": "1011 VX Amsterdam, Netherlands",
+        "context": {
+          "street": {
+            "mapbox_id": "address.1255672540378118",
+            "name": "Mr. J.J. Van Der Veldebrug"
+          },
+          "neighborhood": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBNmhNcUE",
+            "name": "Rapenburg",
+            "wikidata_id": "Q996935"
+          },
+          "postcode": {
+            "mapbox_id": "dXJuOm1ieHBsYzpKUzZv",
+            "name": "1011 VX"
+          },
+          "locality": {
+            "mapbox_id": "dXJuOm1ieHBsYzptd3Fv",
+            "name": "Centrum",
+            "wikidata_id": "Q478282"
+          },
+          "place": {
+            "mapbox_id": "dXJuOm1ieHBsYzpDRWlv",
+            "name": "Amsterdam",
+            "wikidata_id": "Q727"
+          },
+          "region": {
+            "mapbox_id": "dXJuOm1ieHBsYzpoS2c",
+            "name": "North Holland",
+            "wikidata_id": "Q701",
+            "region_code": "NH",
+            "region_code_full": "NL-NH"
+          },
+          "country": {
+            "mapbox_id": "dXJuOm1ieHBsYzpJcWc",
+            "name": "Netherlands",
+            "wikidata_id": "Q55",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          }
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dXJuOm1ieHBsYzpDbmtJVFE",
+      "geometry": { "type": "Point", "coordinates": [2.69647, 48.267181] },
+      "properties": {
+        "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
+        "feature_type": "place",
+        "full_address": "Nemours, Seine-et-Marne, France",
+        "name": "Nemours",
+        "name_preferred": "Nemours",
+        "coordinates": { "longitude": 2.69647, "latitude": 48.267181 },
+        "place_formatted": "Seine-et-Marne, France",
+        "bbox": [2.684885, 48.23952, 2.752482, 48.287179],
+        "context": {
+          "region": {
+            "mapbox_id": "dXJuOm1ieHBsYzpCYVJO",
+            "name": "Seine-et-Marne",
+            "wikidata_id": "Q12753",
+            "region_code": "77",
+            "region_code_full": "FR-77",
+            "alternate": {
+              "mapbox_id": "dXJuOm1ieHBsYzpENFJO",
+              "name": "Île-de-France",
+              "wikidata_id": "Q13917",
+              "region_code": "IDF",
+              "region_code_full": "FR-IDF"
+            }
+          },
+          "country": {
+            "mapbox_id": "dXJuOm1ieHBsYzpJazA",
+            "name": "France",
+            "wikidata_id": "Q142",
+            "country_code": "FR",
+            "country_code_alpha_3": "FRA"
+          },
+          "place": {
+            "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
+            "name": "Nemours",
+            "wikidata_id": "Q321067"
+          }
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dXJuOm1ieHBsYzpBWjJvT1E",
+      "geometry": { "type": "Point", "coordinates": [15.752565, 50.46726] },
+      "properties": {
+        "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
+        "feature_type": "place",
+        "full_address": "Nemojov, Hradec Králové, Czech Republic",
+        "name": "Nemojov",
+        "name_preferred": "Nemojov",
+        "coordinates": { "longitude": 15.752565, "latitude": 50.46726 },
+        "place_formatted": "Hradec Králové, Czech Republic",
+        "bbox": [15.732266, 50.456434, 15.785532, 50.489619],
+        "context": {
+          "region": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBV1E1",
+            "name": "Hradec Králové",
+            "wikidata_id": "Q193295",
+            "region_code": "52",
+            "region_code_full": "CZ-52"
+          },
+          "country": {
+            "mapbox_id": "dXJuOm1ieHBsYzpJams",
+            "name": "Czech Republic",
+            "wikidata_id": "Q213",
+            "country_code": "CZ",
+            "country_code_alpha_3": "CZE"
+          },
+          "place": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
+            "name": "Nemojov",
+            "wikidata_id": "Q1384839"
+          }
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dXJuOm1ieHBsYzpUQWd5",
+      "geometry": { "type": "Point", "coordinates": [-73.87763, 5.065226] },
+      "properties": {
+        "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
+        "feature_type": "place",
+        "full_address": "Nemocón, Cundinamarca, Colombia",
+        "name": "Nemocón",
+        "name_preferred": "Nemocón",
+        "coordinates": { "longitude": -73.87763, "latitude": 5.065226 },
+        "place_formatted": "Cundinamarca, Colombia",
+        "bbox": [-73.935607, 5.027652, -73.828845, 5.161067],
+        "context": {
+          "region": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBZ1F5",
+            "name": "Cundinamarca",
+            "wikidata_id": "Q232564",
+            "region_code": "CUN",
+            "region_code_full": "CO-CUN"
+          },
+          "country": {
+            "mapbox_id": "dXJuOm1ieHBsYzpJakk",
+            "name": "Colombia",
+            "wikidata_id": "Q739",
+            "country_code": "CO",
+            "country_code_alpha_3": "COL"
+          },
+          "place": {
+            "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
+            "name": "Nemocón",
+            "wikidata_id": "Q1574741"
+          }
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dXJuOm1ieHBsYzpEWmhJN0E",
+      "geometry": { "type": "Point", "coordinates": [-97.64859, 32.259964] },
+      "properties": {
+        "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
+        "feature_type": "place",
+        "full_address": "Nemo, Texas, United States",
+        "name": "Nemo",
+        "name_preferred": "Nemo",
+        "coordinates": { "longitude": -97.64859, "latitude": 32.259964 },
+        "place_formatted": "Texas, United States",
+        "bbox": [-97.718258, 32.202235, -97.593345, 32.284992],
+        "context": {
+          "district": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBVW1tN0E",
+            "name": "Somervell County",
+            "wikidata_id": "Q111844"
+          },
+          "region": {
+            "mapbox_id": "dXJuOm1ieHBsYzpBc1Rz",
+            "name": "Texas",
+            "wikidata_id": "Q1439",
+            "region_code": "TX",
+            "region_code_full": "US-TX"
+          },
+          "country": {
+            "mapbox_id": "dXJuOm1ieHBsYzpJdXc",
+            "name": "United States",
+            "wikidata_id": "Q30",
+            "country_code": "US",
+            "country_code_alpha_3": "USA"
+          },
+          "place": {
+            "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
+            "name": "Nemo",
+            "wikidata_id": "Q1977207"
+          }
+        }
+      }
+    }
+  ],
+  "attribution": "NOTICE: © 2025 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service (https://www.mapbox.com/about/maps/). This response and the information it contains may not be retained."
+}

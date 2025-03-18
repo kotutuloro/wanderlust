@@ -2,10 +2,14 @@
 Views for the trips app.
 """
 
+import os
+import requests
+from http import HTTPStatus
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import View, ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
+from django.http import HttpResponse, HttpResponseBadRequest
 
 from .models import Trip, Destination
 from .forms import TripForm, DestinationForm
@@ -156,3 +160,39 @@ class DeleteDestinationView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("trips:trip-detail", args=[self.object.trip.slug])
+
+
+class SearchLocationView(LoginRequiredMixin, View):
+    """View for searching a location with Mapbox."""
+
+    def post(self, request, *args, **kwargs):
+        q = request.POST.get("location")
+        if not q:
+            return HttpResponseBadRequest("Missing search query")
+
+        mapbox_access_token = os.environ["MAPBOX_ACCESS_TOKEN"]
+        params = {
+            "q": q,
+            "access_token": mapbox_access_token,
+        }
+        response = requests.get(
+            "https://api.mapbox.com/search/geocode/v6/forward", params=params)
+
+        if not response.ok:
+            err = str({
+                "reason": response.reason,
+                "response": response.json()
+            })
+            return HttpResponse(err, status=HTTPStatus.BAD_GATEWAY)
+
+        results = []
+        for feature in response.json()["features"]:
+            props = feature.get("properties")
+            if props:
+                results.append({
+                    "mapbox_id": props.get("mapbox_id"),
+                    "name": props.get("name"),
+                    "place": props.get("place_formatted"),
+                })
+
+        return render(request, "trips/location_search_results_snippet.html", {"locations": results})

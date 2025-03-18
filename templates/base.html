@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +12,9 @@
       {% endblock subtitle %}
     </title>
     <link rel="stylesheet" href="{% static "base_styles.css" %}" />
+    <script src="https://unpkg.com/htmx.org@2.0.4"
+            integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+            crossorigin="anonymous"></script>
   </head>
   <body>
     <header class="base">

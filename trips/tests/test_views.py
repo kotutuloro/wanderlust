@@ -1,10 +1,19 @@
+import json
 import datetime
+from unittest import mock
 from django.test import TestCase
 from django.urls import reverse
+from requests import Response as r_Response
 
 from ..models import Trip, Destination
 from ..forms import TripForm, DestinationForm
 from accounts.models import User
+
+
+def get_sample_file(name):
+    import os
+    test_dir = os.path.dirname(__file__)
+    return os.path.join(test_dir, "sample", name)
 
 
 class IndexViewTests(TestCase):
@@ -21,7 +30,7 @@ class IndexViewTests(TestCase):
 
 
 class LoginRequiredTestMixin():
-    def test_not_logged_in(self):
+    def test_not_logged_in(self, *args, **kwargs):
         """
         A logged out user cannot access the path set as the instance's url.
         """
@@ -764,3 +773,124 @@ class DeleteDestinationViewTests(LoginRequiredTestMixin, TestCase):
         self.assertEqual(post_response.status_code, 404)
         self.assertEqual(Destination.objects.filter(
             pk=self.dest.pk).count(), 1)
+
+
+@mock.patch("trips.views.requests", spec=True)
+class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
+    def setUp(self):
+        self.url = reverse("trips:search-loc")
+
+        self.mapbox_access_token = "my-cool-mapbox-api-token"
+        self.mapbox_url = "https://api.mapbox.com/search/geocode/v6/forward"
+
+        self.user = User.objects.create(username="myuser", password="testpw")
+        self.client.force_login(self.user)
+
+        self.mock_env = mock.patch.dict(
+            "os.environ", {"MAPBOX_ACCESS_TOKEN": self.mapbox_access_token})
+        self.mock_env.start()
+
+    def tearDown(self):
+        self.mock_env.stop()
+        return super().tearDown()
+
+    def test_responds_to_search(self, mock_requests):
+        """
+        Calls the external api and returns a modified version of the response.
+        """
+        ext_response = r_Response()
+        ext_response.status_code = 200
+        ext_response.json = mock.MagicMock()
+        with open(get_sample_file("mapbox_geocode_response.json")) as f:
+            ext_response.json.return_value = json.load(f)
+        mock_requests.get.return_value = ext_response
+
+        search_text = "nemo"
+        response = self.client.post(self.url, {"location": search_text})
+
+        self.assertEqual(response.status_code, 200)
+
+        mapbox_params = {
+            "access_token": self.mapbox_access_token,
+            "q": search_text,
+        }
+        mock_requests.get.assert_called_once_with(
+            self.mapbox_url, params=mapbox_params)
+
+        expected = [
+            {
+                "mapbox_id": "address.1255672540378118",
+                "name": "Nemobrug",
+                "place": "1011 VX Amsterdam, Netherlands"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
+                "name": "Nemours",
+                "place": "Seine-et-Marne, France"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
+                "name": "Nemojov",
+                "place": "Hradec Králové, Czech Republic"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
+                "name": "Nemocón",
+                "place": "Cundinamarca, Colombia"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
+                "name": "Nemo",
+                "place": "Texas, United States"
+            },
+        ]
+
+        self.assertTemplateUsed(
+            response, "trips/location_search_results_snippet.html")
+        self.assertEqual(response.context["locations"], expected)
+
+        self.assertContains(response, expected[0]["name"])
+        self.assertContains(response, expected[1]["place"])
+        self.assertContains(response, expected[2]["mapbox_id"])
+
+    def test_errors_on_empty_access_token(self, mock_requests):
+        """
+        Errors if no mapbox access token is set.
+        """
+        with mock.patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesMessage(KeyError, "MAPBOX_ACCESS_TOKEN"):
+                self.client.post(self.url, {"location": "abc"})
+
+        mock_requests.assert_not_called()
+        mock_requests.get.assert_not_called()
+
+    def test_bad_request_on_empty_search(self, mock_requests):
+        """
+        Returns 400 if the search term is empty.
+        """
+        response = self.client.post(self.url, {"location": ""})
+        self.assertContains(response, "Missing search query", status_code=400)
+        mock_requests.assert_not_called()
+        mock_requests.get.assert_not_called()
+
+    def test_bad_gateway_on_mapbox_error(self, mock_requests):
+        """
+        Returns a 502 if the external API returns an error.
+        """
+        ext_response = r_Response()
+        ext_response.status_code = 401
+        ext_response.json = mock.MagicMock()
+        expected_err = {
+            "error_code": "INVALID_TOKEN",
+            "message": "Not Authorized - Invalid Token"
+        }
+        ext_response.json.return_value = expected_err
+        mock_requests.get.return_value = ext_response
+
+        search_text = "nemo"
+        response = self.client.post(self.url, {"location": search_text})
+
+        mapbox_params = {
+            "access_token": self.mapbox_access_token,
+            "q": search_text,
+        }
+        mock_requests.get.assert_called_once_with(
+            self.mapbox_url, params=mapbox_params)
+
+        self.assertContains(response, expected_err, status_code=502)
