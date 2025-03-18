@@ -806,8 +806,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.return_value = ext_response
 
         search_text = "nemo"
-        response = self.client.get(self.url, query_params={
-                                   "location": search_text})
+        response = self.client.post(self.url, {"location": search_text})
 
         self.assertEqual(response.status_code, 200)
 
@@ -856,7 +855,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         with mock.patch.dict("os.environ", {}, clear=True):
             with self.assertRaisesMessage(KeyError, "MAPBOX_ACCESS_TOKEN"):
-                self.client.get(self.url, query_params={"location": "abc"})
+                self.client.post(self.url, {"location": "abc"})
 
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
@@ -865,7 +864,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         Returns 400 if the search term is empty.
         """
-        response = self.client.get(self.url, query_params={"location": ""})
+        response = self.client.post(self.url, {"location": ""})
         self.assertContains(response, "Missing search query", status_code=400)
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
@@ -885,8 +884,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.return_value = ext_response
 
         search_text = "nemo"
-        response = self.client.get(self.url, query_params={
-            "location": search_text})
+        response = self.client.post(self.url, {"location": search_text})
 
         mapbox_params = {
             "access_token": self.mapbox_access_token,

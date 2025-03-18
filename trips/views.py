@@ -165,8 +165,8 @@ class DeleteDestinationView(UserPassesTestMixin, DeleteView):
 class SearchLocationView(LoginRequiredMixin, View):
     """View for searching a location with Mapbox."""
 
-    def get(self, request, *args, **kwargs):
-        q = request.GET.get("location")
+    def post(self, request, *args, **kwargs):
+        q = request.POST.get("location")
         if not q:
             return HttpResponseBadRequest("Missing search query")
 
