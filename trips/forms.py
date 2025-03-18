@@ -32,6 +32,7 @@ class DestinationForm(ModelForm):
                          widget=TextInput(attrs={
                              "placeholder": "(Search for a new location)",
                              "hx-post": reverse_lazy("trips:search-loc"),
+                             "hx-params": "location",
                              "hx-target": "next #id_location_results",
                              "hx-swap": "outerHTML",
                              "hx-trigger": "input delay:250ms",
