@@ -1,0 +1,26 @@
+<div id="id_location_results">
+  <script>
+    function selectLocation(elem, event) {
+      event.preventDefault();
+      form = htmx.closest(elem, "form")
+
+      mapboxIdInput = htmx.find(form, "input#id_mapbox_id");
+      mapboxIdInput.value = elem.dataset.mapboxId;
+
+      locationSearchInput = htmx.find(form, "input#id_location");
+      locationSearchInput.value = elem.textContent;
+
+      // htmx.takeClass(htmx.closest(elem, "li"), "selected");
+      htmx.swap(htmx.closest(elem, "div#id_location_results"), "", {swapStyle: 'innerHTML'});
+    };
+  </script>
+  <ul>
+    {% for location in locations %}
+      <li>
+        <button type="button"
+                data-mapbox-id="{{ location.mapbox_id }}"
+                hx-on:click="selectLocation(this, event)">{{ location.name }} - {{ location.place }}</button>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
