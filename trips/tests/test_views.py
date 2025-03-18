@@ -807,7 +807,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
 
         search_text = "nemo"
         response = self.client.get(self.url, query_params={
-                                   "query": search_text})
+                                   "location": search_text})
 
         self.assertEqual(response.status_code, 200)
 
@@ -818,32 +818,37 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.assert_called_once_with(
             self.mapbox_url, params=mapbox_params)
 
-        expected = {
-            "results": [
-                {
-                    "mapbox_id": "address.1255672540378118",
-                    "name": "Nemobrug",
-                    "place": "1011 VX Amsterdam, Netherlands"
-                }, {
-                    "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
-                    "name": "Nemours",
-                    "place": "Seine-et-Marne, France"
-                }, {
-                    "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
-                    "name": "Nemojov",
-                    "place": "Hradec Králové, Czech Republic"
-                }, {
-                    "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
-                    "name": "Nemocón",
-                    "place": "Cundinamarca, Colombia"
-                }, {
-                    "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
-                    "name": "Nemo",
-                    "place": "Texas, United States"
-                },
-            ]
-        }
-        self.assertEqual(response.json(), expected)
+        expected = [
+            {
+                "mapbox_id": "address.1255672540378118",
+                "name": "Nemobrug",
+                "place": "1011 VX Amsterdam, Netherlands"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
+                "name": "Nemours",
+                "place": "Seine-et-Marne, France"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
+                "name": "Nemojov",
+                "place": "Hradec Králové, Czech Republic"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
+                "name": "Nemocón",
+                "place": "Cundinamarca, Colombia"
+            }, {
+                "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
+                "name": "Nemo",
+                "place": "Texas, United States"
+            },
+        ]
+
+        self.assertTemplateUsed(
+            response, "trips/location_search_results_snippet.html")
+        self.assertEqual(response.context["locations"], expected)
+
+        self.assertContains(response, expected[0]["name"])
+        self.assertContains(response, expected[1]["place"])
+        self.assertContains(response, expected[2]["mapbox_id"])
 
     def test_errors_on_empty_access_token(self, mock_requests):
         """
@@ -851,7 +856,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         with mock.patch.dict("os.environ", {}, clear=True):
             with self.assertRaisesMessage(KeyError, "MAPBOX_ACCESS_TOKEN"):
-                self.client.get(self.url, query_params={"query": "abc"})
+                self.client.get(self.url, query_params={"location": "abc"})
 
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
@@ -860,10 +865,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         """
         Returns 400 if the search term is empty.
         """
-        response = self.client.get(self.url, query_params={"query": ""})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json()["errors"]["query"],
-                         "Missing search query")
+        response = self.client.get(self.url, query_params={"location": ""})
+        self.assertContains(response, "Missing search query", status_code=400)
         mock_requests.assert_not_called()
         mock_requests.get.assert_not_called()
 
@@ -883,7 +886,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
 
         search_text = "nemo"
         response = self.client.get(self.url, query_params={
-            "query": search_text})
+            "location": search_text})
 
         mapbox_params = {
             "access_token": self.mapbox_access_token,
@@ -892,6 +895,4 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mock_requests.get.assert_called_once_with(
             self.mapbox_url, params=mapbox_params)
 
-        self.assertEqual(response.status_code, 502)
-        self.assertEqual(response.json()["errors"]["mapbox"]["response"],
-                         expected_err)
+        self.assertContains(response, expected_err, status_code=502)
