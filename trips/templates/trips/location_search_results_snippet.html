@@ -4,8 +4,11 @@
       event.preventDefault();
       form = htmx.closest(elem, "form")
 
-      mapboxIdInput = htmx.find(form, "input#id_mapbox_id");
-      mapboxIdInput.value = elem.dataset.mapboxId;
+      latitudeInput = htmx.find(form, "input#id_latitude");
+      latitudeInput.value = elem.dataset.latitude;
+
+      longitudeInput = htmx.find(form, "input#id_longitude");
+      longitudeInput.value = elem.dataset.longitude;
 
       locationSearchInput = htmx.find(form, "input#id_location");
       locationSearchInput.value = elem.textContent;
@@ -18,7 +21,8 @@
     {% for location in locations %}
       <li>
         <button type="button"
-                data-mapbox-id="{{ location.mapbox_id }}"
+                data-latitude="{{ location.latitude }}"
+                data-longitude="{{ location.longitude }}"
                 hx-on:click="selectLocation(this, event)">{{ location.name }} - {{ location.place }}</button>
       </li>
     {% endfor %}

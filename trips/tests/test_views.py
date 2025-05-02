@@ -781,7 +781,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         self.url = reverse("trips:search-loc")
 
         self.mapbox_access_token = "my-cool-mapbox-api-token"
-        self.mapbox_url = "https://api.mapbox.com/search/geocode/v6/forward"
+        self.mapbox_url = "https://api.mapbox.com/search/searchbox/v1/forward"
 
         self.user = User.objects.create(username="myuser", password="testpw")
         self.client.force_login(self.user)
@@ -801,7 +801,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         ext_response = r_Response()
         ext_response.status_code = 200
         ext_response.json = mock.MagicMock()
-        with open(get_sample_file("mapbox_geocode_response.json")) as f:
+        with open(get_sample_file("mapbox_search_box_response.json")) as f:
             ext_response.json.return_value = json.load(f)
         mock_requests.get.return_value = ext_response
 
@@ -813,31 +813,37 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mapbox_params = {
             "access_token": self.mapbox_access_token,
             "q": search_text,
+            "auto_complete": "true",
         }
         mock_requests.get.assert_called_once_with(
             self.mapbox_url, params=mapbox_params)
 
         expected = [
             {
-                "mapbox_id": "address.1255672540378118",
-                "name": "Nemobrug",
-                "place": "1011 VX Amsterdam, Netherlands"
-            }, {
-                "mapbox_id": "dXJuOm1ieHBsYzpDbmtJVFE",
-                "name": "Nemours",
-                "place": "Seine-et-Marne, France"
-            }, {
-                "mapbox_id": "dXJuOm1ieHBsYzpBWjJvT1E",
-                "name": "Nemojov",
-                "place": "Hradec Králové, Czech Republic"
-            }, {
-                "mapbox_id": "dXJuOm1ieHBsYzpUQWd5",
-                "name": "Nemocón",
-                "place": "Cundinamarca, Colombia"
-            }, {
-                "mapbox_id": "dXJuOm1ieHBsYzpEWmhJN0E",
                 "name": "Nemo",
-                "place": "Texas, United States"
+                "place": "1031 KT Amsterdam, Netherlands",
+                "latitude": 52.38434029,
+                "longitude": 4.90127422,
+            }, {
+                "name": "Nemo",
+                "place": "1014 AZ Amsterdam, Netherlands",
+                "latitude": 52.38790683,
+                "longitude": 4.86392543,
+            }, {
+                "name": "Nemo",
+                "place": "3014 GL Rotterdam, Netherlands",
+                "latitude": 51.91399273,
+                "longitude": 4.46392068,
+            }, {
+                "name": "Nemop",
+                "place": "1071 WL Amsterdam, Netherlands",
+                "latitude": 52.35277087,
+                "longitude": 4.8805689,
+            }, {
+                "name": "Nemoland",
+                "place": "1721 PW Broek op Langedijk, Netherlands",
+                "latitude": 52.67813002,
+                "longitude": 4.79447195,
             },
         ]
 
@@ -847,7 +853,8 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
 
         self.assertContains(response, expected[0]["name"])
         self.assertContains(response, expected[1]["place"])
-        self.assertContains(response, expected[2]["mapbox_id"])
+        self.assertContains(response, expected[2]["latitude"])
+        self.assertContains(response, expected[3]["longitude"])
 
     def test_errors_on_empty_access_token(self, mock_requests):
         """
@@ -889,6 +896,7 @@ class SearchLocationViewTests(LoginRequiredTestMixin, TestCase):
         mapbox_params = {
             "access_token": self.mapbox_access_token,
             "q": search_text,
+            "auto_complete": "true",
         }
         mock_requests.get.assert_called_once_with(
             self.mapbox_url, params=mapbox_params)

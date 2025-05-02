@@ -44,9 +44,10 @@ class DestinationModelTests(TestCase):
         """
         trip = Trip.objects.create(owner=User.objects.create(), title="trip")
         dest = Destination.objects.create(
-            trip=trip, name="test dest", mapbox_id="address.12345678910", start_time="2025-01-01 12:01Z")
+            trip=trip, name="test dest", latitude=29.76328000, longitude=-95.36327000, start_time="2025-01-01 12:01Z")
         self.assertEqual(dest.name, "test dest")
         self.assertIs(dest.trip, trip)
-        self.assertEqual(dest.mapbox_id, "address.12345678910")
+        self.assertEqual(dest.latitude, 29.76328000)
+        self.assertEqual(dest.longitude, -95.36327000)
         self.assertEqual(dest.start_time, "2025-01-01 12:01Z")
         self.assertIsNone(dest.end_time)
