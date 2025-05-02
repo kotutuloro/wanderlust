@@ -18,6 +18,29 @@
   <p>Notes: {{ trip.notes }}</p>
   <div>
     Destinations:
+    {% if mapbox_destinations %}
+      <div id='mapbox-map' style='width: 400px; height: 300px;'></div>
+      <script>
+        mapboxgl.accessToken = "{{ mapbox_api_key|safe }}";
+        const map = new mapboxgl.Map({
+          container: 'mapbox-map',
+          style: 'mapbox://styles/mapbox/streets-v12',
+        });
+        const dests = {{ mapbox_destinations|safe }};
+        console.log(dests);
+        dests.forEach((dest) => {
+          const popup = new mapboxgl.Popup().setText(dest.name);
+          const marker = new mapboxgl.Marker()
+            .setLngLat([dest.longitude, dest.latitude])
+            .setPopup(popup)
+            .addTo(map);
+        });
+        const longs = dests.map(d=>d.longitude)
+        const lats = dests.map(d=>d.latitude)
+        const bounds = [Math.min(...longs), Math.min(...lats), Math.max(...longs), Math.max(...lats)]
+        map.fitBounds(bounds, {padding: 50, maxZoom: 15});
+      </script>
+    {% endif %}
     <ul>
       {% for dest in trip.destination_set.all %}
         <li>

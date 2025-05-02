@@ -49,6 +49,10 @@ class TripDetailView(UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["create_dest_form"] = DestinationForm(only_trip=self.object)
+        mapbox_dests = self.object.destination_set.exclude(longitude=None).exclude(
+            latitude=None).values('name', 'latitude', 'longitude')
+        context["mapbox_destinations"] = list(mapbox_dests)
+        context["mapbox_api_key"] = os.getenv("MAPBOX_ACCESS_TOKEN")
         return context
 
 
