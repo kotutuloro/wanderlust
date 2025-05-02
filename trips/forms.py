@@ -40,10 +40,11 @@ class DestinationForm(ModelForm):
 
     class Meta:
         model = Destination
-        fields = ("trip", "name", "location",
-                  "mapbox_id", "start_time", "end_time")
+        fields = ("trip", "name", "location", "latitude",
+                  "longitude", "start_time", "end_time")
         widgets = {
-            "mapbox_id": HiddenInput(),
+            "latitude": HiddenInput(),
+            "longitude": HiddenInput(),
             "start_time": UIDateTimeInput(),
             "end_time": UIDateTimeInput(),
         }

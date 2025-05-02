@@ -174,9 +174,10 @@ class SearchLocationView(LoginRequiredMixin, View):
         params = {
             "q": q,
             "access_token": mapbox_access_token,
+            "auto_complete": "true",
         }
         response = requests.get(
-            "https://api.mapbox.com/search/geocode/v6/forward", params=params)
+            "https://api.mapbox.com/search/searchbox/v1/forward", params=params)
 
         if not response.ok:
             err = str({
@@ -187,12 +188,13 @@ class SearchLocationView(LoginRequiredMixin, View):
 
         results = []
         for feature in response.json()["features"]:
-            props = feature.get("properties")
-            if props:
-                results.append({
-                    "mapbox_id": props.get("mapbox_id"),
-                    "name": props.get("name"),
-                    "place": props.get("place_formatted"),
-                })
+            props = feature["properties"]
+            coords = props["coordinates"]
+            results.append({
+                "name": props["name"],
+                "place": props.get("place_formatted"),
+                "latitude": coords["latitude"],
+                "longitude": coords["longitude"],
+            })
 
         return render(request, "trips/location_search_results_snippet.html", {"locations": results})

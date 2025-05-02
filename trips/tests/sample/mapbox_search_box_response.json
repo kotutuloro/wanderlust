@@ -1,0 +1,319 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": [4.90127422, 52.38434029], "type": "Point" },
+      "properties": {
+        "name": "Nemo",
+        "mapbox_id": "dXJuOm1ieHBvaTo5NDZmYTYxMC0yYTYzLTRiOGUtODU0MC1mZGQyMjhhZDFmNjI",
+        "feature_type": "poi",
+        "address": "IJpromenade 1",
+        "full_address": "IJpromenade 1, 1031 KT Amsterdam, Netherlands",
+        "place_formatted": "1031 KT Amsterdam, Netherlands",
+        "context": {
+          "country": {
+            "name": "Netherlands",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          },
+          "postcode": { "id": "dXJuOm1ieHBsYzpBZ0hPcUE", "name": "1031 KT" },
+          "place": { "id": "dXJuOm1ieHBsYzpDRWlv", "name": "Amsterdam" },
+          "neighborhood": {
+            "id": "dXJuOm1ieHBsYzpCVHlNcUE",
+            "name": "Noordelijke IJ-oevers"
+          },
+          "address": {
+            "name": "IJpromenade 1",
+            "address_number": "1",
+            "street_name": "ijpromenade"
+          },
+          "street": { "name": "ijpromenade" }
+        },
+        "coordinates": {
+          "latitude": 52.38434029,
+          "longitude": 4.90127422,
+          "routable_points": [
+            { "name": "POI", "latitude": 52.384416, "longitude": 4.902175 }
+          ]
+        },
+        "language": "",
+        "maki": "museum",
+        "poi_category": ["museum", "tourist attraction"],
+        "poi_category_ids": ["museum", "tourist_attraction"],
+        "external_ids": { "dataplor": "d14a381b-be5e-442f-93c1-41c84f5758bf" },
+        "metadata": {},
+        "operational_status": "active",
+        "distance": 1678
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": [4.86392543, 52.38790683], "type": "Point" },
+      "properties": {
+        "name": "Nemo",
+        "mapbox_id": "dXJuOm1ieHBvaTpiNWEyYmZjYy02N2M3LTQ0NzUtYTk1ZS1hYjA4ZjA4NTJkZjY",
+        "feature_type": "poi",
+        "address": "Overbrakerpad 2",
+        "full_address": "Overbrakerpad 2, 1014 AZ Amsterdam, Netherlands",
+        "place_formatted": "1014 AZ Amsterdam, Netherlands",
+        "context": {
+          "country": {
+            "name": "Netherlands",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          },
+          "postcode": { "id": "dXJuOm1ieHBsYzpoQzZv", "name": "1014 AZ" },
+          "place": { "id": "dXJuOm1ieHBsYzpDRWlv", "name": "Amsterdam" },
+          "neighborhood": {
+            "id": "dXJuOm1ieHBsYzpCVUFzcUE",
+            "name": "Westerpark"
+          },
+          "address": {
+            "name": "Overbrakerpad 2",
+            "address_number": "2",
+            "street_name": "overbrakerpad"
+          },
+          "street": { "name": "overbrakerpad" }
+        },
+        "coordinates": {
+          "latitude": 52.38790683,
+          "longitude": 4.86392543,
+          "routable_points": [
+            {
+              "name": "POI",
+              "latitude": 52.387739116469895,
+              "longitude": 4.863928455759562
+            }
+          ]
+        },
+        "language": "",
+        "maki": "marker",
+        "poi_category": [],
+        "poi_category_ids": [],
+        "external_ids": { "dataplor": "ca51a589-1ad8-4d9c-8c08-d744211f0ad5" },
+        "metadata": {
+          "phone": "+31206817013",
+          "website": "http://www.nemoland.nl/",
+          "open_hours": {
+            "periods": [
+              {
+                "open": { "day": 1, "time": "1000" },
+                "close": { "day": 1, "time": "1700" }
+              },
+              {
+                "open": { "day": 2, "time": "1000" },
+                "close": { "day": 2, "time": "1700" }
+              },
+              {
+                "open": { "day": 4, "time": "1000" },
+                "close": { "day": 4, "time": "1700" }
+              },
+              {
+                "open": { "day": 5, "time": "1000" },
+                "close": { "day": 5, "time": "1700" }
+              }
+            ]
+          }
+        },
+        "operational_status": "active",
+        "distance": 1319
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": [4.46392068, 51.91399273], "type": "Point" },
+      "properties": {
+        "name": "Nemo",
+        "mapbox_id": "dXJuOm1ieHBvaTo0ZDM2MWZlZC1jYmUxLTQxZDEtYmRkNC00M2ExYjJiYmQ4NGY",
+        "feature_type": "poi",
+        "address": "Nieuwe Binnenweg 179b",
+        "full_address": "Nieuwe Binnenweg 179b, 3014 GL Rotterdam, Netherlands",
+        "place_formatted": "3014 GL Rotterdam, Netherlands",
+        "context": {
+          "country": {
+            "name": "Netherlands",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          },
+          "postcode": { "id": "dXJuOm1ieHBsYzpRQ3NPcUE", "name": "3014 GL" },
+          "place": { "id": "dXJuOm1ieHBsYzoyd2lv", "name": "Rotterdam" },
+          "neighborhood": {
+            "id": "dXJuOm1ieHBsYzpBMnZNcUE",
+            "name": "Oude Westen"
+          },
+          "address": {
+            "name": "Nieuwe Binnenweg 179b",
+            "address_number": "179b",
+            "street_name": "nieuwe binnenweg"
+          },
+          "street": { "name": "nieuwe binnenweg" }
+        },
+        "coordinates": {
+          "latitude": 51.91399273,
+          "longitude": 4.46392068,
+          "routable_points": [
+            {
+              "name": "POI",
+              "latitude": 51.91384035928302,
+              "longitude": 4.463949249509429
+            }
+          ]
+        },
+        "language": "",
+        "maki": "shop",
+        "poi_category": ["dispensary", "shopping"],
+        "poi_category_ids": ["cannabis_dispensary", "shopping"],
+        "external_ids": { "dataplor": "36db3091-6572-4013-b68e-bf3ea8e93cab" },
+        "metadata": {
+          "phone": "+31102250613",
+          "open_hours": {
+            "periods": [
+              {
+                "open": { "day": 0, "time": "1000" },
+                "close": { "day": 0, "time": "2200" }
+              },
+              {
+                "open": { "day": 1, "time": "1000" },
+                "close": { "day": 1, "time": "2200" }
+              },
+              {
+                "open": { "day": 2, "time": "1000" },
+                "close": { "day": 2, "time": "2200" }
+              },
+              {
+                "open": { "day": 3, "time": "1000" },
+                "close": { "day": 3, "time": "2200" }
+              },
+              {
+                "open": { "day": 4, "time": "1000" },
+                "close": { "day": 4, "time": "2200" }
+              },
+              {
+                "open": { "day": 5, "time": "1000" },
+                "close": { "day": 5, "time": "2200" }
+              },
+              {
+                "open": { "day": 6, "time": "1000" },
+                "close": { "day": 6, "time": "2200" }
+              }
+            ]
+          }
+        },
+        "operational_status": "active",
+        "distance": 58974
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": [4.8805689, 52.35277087], "type": "Point" },
+      "properties": {
+        "name": "Nemop",
+        "mapbox_id": "dXJuOm1ieHBvaToxYzU0YjMwNy01NzFkLTQxNDgtYmU5NS1iZTcwNzRmMjZhM2Q",
+        "feature_type": "poi",
+        "address": "Bronckhorststraat",
+        "full_address": "Bronckhorststraat, 1071 WL Amsterdam, Netherlands",
+        "place_formatted": "1071 WL Amsterdam, Netherlands",
+        "context": {
+          "country": {
+            "name": "Netherlands",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          },
+          "postcode": { "id": "dXJuOm1ieHBsYzpCWXpPcUE", "name": "1071 WL" },
+          "place": { "id": "dXJuOm1ieHBsYzpDRWlv", "name": "Amsterdam" },
+          "neighborhood": {
+            "id": "dXJuOm1ieHBsYzpCVHdzcUE",
+            "name": "Museumkwartier"
+          },
+          "street": { "name": "bronckhorststraat" }
+        },
+        "coordinates": {
+          "latitude": 52.35277087,
+          "longitude": 4.8805689,
+          "routable_points": [
+            {
+              "name": "POI",
+              "latitude": 52.3527787815119,
+              "longitude": 4.880565607231166
+            }
+          ]
+        },
+        "language": "",
+        "maki": "building-alt1",
+        "poi_category": ["office"],
+        "poi_category_ids": ["office"],
+        "external_ids": { "dataplor": "aceeec01-ef95-48ef-9627-6c075f634e2b" },
+        "metadata": {
+          "phone": "+31645490655",
+          "website": "http://www.nemop.nl/",
+          "open_hours": {
+            "periods": [{ "open": { "day": 0, "time": "0000" } }],
+            "weekday_text": [
+              "Monday: Open 24 hours",
+              "Tuesday: Open 24 hours",
+              "Wednesday: Open 24 hours",
+              "Thursday: Open 24 hours",
+              "Friday: Open 24 hours",
+              "Saturday: Open 24 hours",
+              "Sunday: Open 24 hours"
+            ]
+          }
+        },
+        "operational_status": "active",
+        "distance": 2989
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": [4.79447195, 52.67813002], "type": "Point" },
+      "properties": {
+        "name": "Nemoland",
+        "mapbox_id": "dXJuOm1ieHBvaTpiNWUzYTVjNS02ZGIzLTQwNWItYTNjYS0xN2I4YTM4ZWZhYzY",
+        "feature_type": "poi",
+        "address": "Bijlestaal 46-E",
+        "full_address": "Bijlestaal 46-E, 1721 PW Broek op Langedijk, Netherlands",
+        "place_formatted": "1721 PW Broek op Langedijk, Netherlands",
+        "context": {
+          "country": {
+            "name": "Netherlands",
+            "country_code": "NL",
+            "country_code_alpha_3": "NLD"
+          },
+          "postcode": { "id": "dXJuOm1ieHBsYzpHZHd1cUE", "name": "1721 PW" },
+          "place": {
+            "id": "dXJuOm1ieHBsYzpKQWlv",
+            "name": "Broek op Langedijk"
+          },
+          "address": {
+            "name": "Bijlestaal 46-E",
+            "address_number": "46-e",
+            "street_name": "bijlestaal"
+          },
+          "street": { "name": "bijlestaal" }
+        },
+        "coordinates": {
+          "latitude": 52.67813002,
+          "longitude": 4.79447195,
+          "routable_points": [
+            {
+              "name": "POI",
+              "latitude": 52.67785751093599,
+              "longitude": 4.794503483864057
+            }
+          ]
+        },
+        "language": "",
+        "maki": "aquarium",
+        "poi_category": ["aquarium", "tourist attraction"],
+        "poi_category_ids": ["aquarium", "tourist_attraction"],
+        "external_ids": { "dataplor": "61d1941d-fda3-46f0-9049-49711dc65ede" },
+        "metadata": {},
+        "operational_status": "closed",
+        "distance": 33670
+      }
+    }
+  ],
+  "attribution": "© 2025 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service. (https://www.mapbox.com/about/maps/)",
+  "response_id": "dvOsuPxXi66rMTotPSVuv-BpZJ9xTHgOSiD6hHRJi7Vq6i3V0ewyKDpwf-c4_CsJyTpcFh-OIjPuzcNre4PyESPuIBvshpXjxGQ="
+}
