@@ -19,7 +19,7 @@
   <div>
     Destinations:
     {% if mapbox_destinations %}
-      <div id='mapbox-map' style='width: 400px; height: 300px;'></div>
+      <div id="mapbox-map" style="width: 400px; height: 300px;"></div>
       <script>
         mapboxgl.accessToken = "{{ mapbox_api_key|safe }}";
         const map = new mapboxgl.Map({

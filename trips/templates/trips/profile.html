@@ -4,6 +4,29 @@
 {% endblock subtitle %}
 {% block content %}
   <h2>My Trips</h2>
+  {% if user_trip_list %}
+    <div id="mapbox-map" style="width: 400px; height: 300px;"></div>
+    <script>
+        mapboxgl.accessToken = "{{ mapbox_api_key|safe }}";
+        const map = new mapboxgl.Map({
+          container: 'mapbox-map',
+          style: 'mapbox://styles/mapbox/streets-v12',
+        });
+        const trips = {{ mapbox_trips|safe }};
+        console.log(trips);
+        trips.forEach((trip) => {
+          const popup = new mapboxgl.Popup().setHTML(`<a href="${trip.link}">${trip.title}</a>`);
+          const marker = new mapboxgl.Marker()
+            .setLngLat([trip.avg_longitude, trip.avg_latitude])
+            .setPopup(popup)
+            .addTo(map);
+        });
+        const longs = trips.map(t=>t.avg_longitude)
+        const lats = trips.map(t=>t.avg_latitude)
+        const bounds = [Math.min(...longs), Math.min(...lats), Math.max(...longs), Math.max(...lats)]
+        map.fitBounds(bounds, {padding: 50, maxZoom: 8});
+    </script>
+  {% endif %}
   <ul>
     {% for trip in user_trip_list %}
       <li>
