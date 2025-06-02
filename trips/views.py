@@ -10,6 +10,7 @@ from django.views.generic import View, ListView, CreateView, DetailView, UpdateV
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.db.models import Avg
 
 from .models import Trip, Destination
 from .forms import TripForm, DestinationForm
@@ -32,6 +33,15 @@ class UserTripsView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["create_trip_form"] = TripForm()
         context["create_dest_form"] = DestinationForm(user=self.request.user)
+        context["mapbox_api_key"] = os.getenv("MAPBOX_ACCESS_TOKEN")
+        mapbox_trips = self.request.user.trip_set.annotate(avg_latitude=Avg('destination__latitude'), avg_longitude=Avg(
+            'destination__longitude')).exclude(avg_latitude=None).exclude(avg_longitude=None)
+        context["mapbox_trips"] = [{
+            'title': trip.title,
+            'avg_latitude': trip.avg_latitude,
+            'avg_longitude': trip.avg_longitude,
+            'link': trip.get_absolute_url(),
+        } for trip in mapbox_trips]
         return context
 
     def get_queryset(self):
@@ -49,6 +59,10 @@ class TripDetailView(UserPassesTestMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["create_dest_form"] = DestinationForm(only_trip=self.object)
+        mapbox_dests = self.object.destination_set.exclude(longitude=None).exclude(
+            latitude=None).values('name', 'latitude', 'longitude')
+        context["mapbox_destinations"] = list(mapbox_dests)
+        context["mapbox_api_key"] = os.getenv("MAPBOX_ACCESS_TOKEN")
         return context
 
 
